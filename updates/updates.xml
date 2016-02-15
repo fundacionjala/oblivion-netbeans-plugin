@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE module_updates PUBLIC "-//NetBeans//DTD Autoupdate Catalog 2.6//EN" "http://www.netbeans.org/dtds/autoupdate-catalog-2_6.dtd">
+<module_updates timestamp="46/23/22/23/10/2015">
+
+
+
+<module autoload="true" codenamebase="org.fundacionjala.oblivion.gradle" distribution="org-fundacionjala-oblivion-gradle.nbm" downloadsize="15988652" homepage="" license="202F4163" moduleauthor="" needsrestart="false" releasedate="2015/10/23">
+    <manifest AutoUpdate-Show-In-Client="true" OpenIDE-Module="org.fundacionjala.oblivion.gradle" OpenIDE-Module-Implementation-Version="151023" OpenIDE-Module-Java-Dependencies="Java &gt; 1.7" OpenIDE-Module-Name="GradleLibs" OpenIDE-Module-Requires="org.openide.modules.ModuleFormat1" OpenIDE-Module-Specification-Version="1.0"/>
+    
+</module>
+
+<module codenamebase="org.fundacionjala.oblivion" distribution="org-fundacionjala-oblivion.nbm" downloadsize="675861" homepage="" license="202F4163" moduleauthor="" needsrestart="true" releasedate="2015/10/23">
+    <manifest AutoUpdate-Show-In-Client="true" OpenIDE-Module="org.fundacionjala.oblivion" OpenIDE-Module-Implementation-Version="151023" OpenIDE-Module-Java-Dependencies="Java &gt; 1.7" OpenIDE-Module-Module-Dependencies="org.apache.commons.io &gt; 1.4, org.fundacionjala.oblivion.gradle &gt; 1.0, org.fundacionjala.oblivion.parsing &gt; 1.0, org.netbeans.api.annotations.common/1 &gt; 1.24.1, org.netbeans.api.progress/1 &gt; 1.38.1, org.netbeans.core.multiview/1 &gt; 1.40.1, org.netbeans.libs.javacapi &gt; 8.11.1.3, org.netbeans.libs.json_simple/1 &gt; 0.9.1, org.netbeans.modules.csl.api/2 &gt; 2.47.1.2.1.1.8, org.netbeans.modules.editor.bracesmatching/0 &gt; 1.34.1.43, org.netbeans.modules.editor.indent/2 &gt; 1.37.1, org.netbeans.modules.editor.lib2/1 &gt; 1.85.1.43, org.netbeans.modules.editor.mimelookup/1 &gt; 1.36.1, org.netbeans.modules.editor.settings/1 &gt; 1.53.1, org.netbeans.modules.keyring &gt; 1.20.1, org.netbeans.modules.lexer/2 &gt; 1.59.1.1, org.netbeans.modules.options.editor/1 = 201411181905, org.netbeans.modules.parsing.api/1 &gt; 1.78.3.8, org.netbeans.modules.projectapi/1 &gt; 1.60.2, org.netbeans.modules.projectuiapi/1 &gt; 1.78.1.8, org.netbeans.modules.settings/1 &gt; 1.45.1, org.netbeans.spi.editor.hints/0 &gt; 1.35.1.7.43, org.netbeans.spi.navigator/1 &gt; 1.33.1, org.netbeans.spi.quicksearch &gt; 1.23.1, org.openide.awt &gt; 7.62.1, org.openide.dialogs &gt; 7.38.1, org.openide.filesystems &gt; 8.12.1, org.openide.io &gt; 1.45.1, org.openide.loaders &gt; 7.57.2, org.openide.nodes &gt; 7.39.1, org.openide.text &gt; 6.62.2, org.openide.util &gt; 8.39.1, org.openide.util.lookup &gt; 8.25.1, org.openide.windows &gt; 6.71.1" OpenIDE-Module-Name="Oblivion" OpenIDE-Module-Requires="org.openide.modules.ModuleFormat1" OpenIDE-Module-Specification-Version="1.0"/>
+    
+</module>
+
+<module autoload="true" codenamebase="org.fundacionjala.oblivion.parsing" distribution="org-fundacionjala-oblivion-parsing.nbm" downloadsize="85148" homepage="" license="202F4163" moduleauthor="" needsrestart="true" releasedate="2015/10/23">
+    <manifest AutoUpdate-Show-In-Client="true" OpenIDE-Module="org.fundacionjala.oblivion.parsing" OpenIDE-Module-Implementation-Version="151023" OpenIDE-Module-Java-Dependencies="Java &gt; 1.7" OpenIDE-Module-Module-Dependencies="org.netbeans.libs.javacapi &gt; 8.11.1.3, org.netbeans.modules.csl.api/2 &gt; 2.47.1.2.1.1.8, org.netbeans.modules.lexer/2 &gt; 1.59.1.1, org.netbeans.modules.parsing.api/1 &gt; 1.78.3.8, org.openide.util &gt; 8.39.1" OpenIDE-Module-Name="Parsing" OpenIDE-Module-Requires="org.openide.modules.ModuleFormat1" OpenIDE-Module-Specification-Version="1.0"/>
+    
+</module>
+
+<license name="202F4163" url="licenses/202F4163.license"/>
+</module_updates>
+

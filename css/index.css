@@ -1,0 +1,72 @@
+.features {
+    padding: 10px 10px 10px 40px;
+    margin-top: 20px;
+    border: 1px solid #c0c0c0;
+    border-radius: 15px;
+}
+
+.features .features-title {
+    color: #fff;
+    background-color: #049cdb;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.features .feature {
+    margin: 15px 0;
+}
+
+.features .feature > .feature-title {
+    color: #008bff;
+    margin: 0 0 10px 0;
+}
+
+.features .feature .feature-content > img {
+    width: 480px;
+    height: 340px;
+}
+
+.git-link {
+    text-align: right;
+    padding-top: 20px;
+}
+
+.git-section {
+    background-color: #049cdb;
+    border: solid 2px #ffffff;
+    padding: 15px;
+    border-radius: 15px;
+    color: #ffffff;
+}
+
+.git-section a {
+    color: #ffffff;
+}
+
+.license > .panel-body {
+    border: solid 1px #049cdb;
+}
+
+.license > .panel-heading {
+    color: #ffffff;
+    background-image: -webkit-linear-gradient(top, #049cdb 0, #04b1f5 100%);
+    background-image: -o-linear-gradient(top, #049cdb 0, #04b1f5 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#049cdb), to(#04b1f5));
+    background-image: linear-gradient(to bottom, #049cdb 0, #04b1f5 100%);
+}
+
+.main-description {
+    height: auto;
+    min-height: 320px;
+    border: 1px solid #c0c0c0;
+    padding: 18px;
+    border-radius: 15px;
+}
+
+.main-description h3 {
+    color: #008bff;
+}
+
+.main-description img {
+    margin-left: 15px;
+}

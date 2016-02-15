@@ -1,0 +1,15 @@
+.download {
+    border: solid 1px #049cdb;
+}
+
+.download > .download-title {
+    color: #ffffff;
+    background-image: -webkit-linear-gradient(top,#049cdb 0, #04b1f5 100%);
+    background-image: -o-linear-gradient(top,#049cdb 0,#04b1f5 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#049cdb),to(#04b1f5));
+    background-image: linear-gradient(to bottom,#049cdb 0,#04b1f5 100%);
+}
+
+.download-container {
+	padding-top: 15px;
+}
