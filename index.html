@@ -23,8 +23,9 @@
 
 <body>
     <div id="main-navbar">
-        <div>
-            <h1><img class="salesforce-logo" src="img/salesforce.png" align="left"> Oblivion </h1>
+        <div class="navbar-header">
+            <img class="salesforce-logo" src="img/salesforce-white.png" align="left">
+            <a class="navbar-brand" href="#"> Oblivion</a>
         </div>
         <ul class="nav nav-tabs">
             <li class="active">
@@ -47,8 +48,17 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="main-description">
-                                <h3>Description </h3>
-                                <img src="img/code.jpg" height="211" width="469" align="right"> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                <h3></h3>
+                                <img src="img/code.jpg" height="211" width="469" align="right">
+                                <p align="justify" class="description">
+                                    Oblivion comes from the need to have a fully featured development environment for the force.com platform.
+                                </p>
+                                <p align="justify" class="description">
+                                    Our main goal is to provide  tools that are standard among Integraged Development Environments.
+                                </p>
+                                <p align="justify" class="description">
+                                    To achieve this goal, we have chosen the <a href="https://netbeans.org/">Netbeans</a> platform and combined it with <a href="http://fundacionjala.github.io/enforce-gradle-plugin/">Enforce</a>'s deployment features in order to provide an integrated environment which allows developers to build force.com applications easily. 
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -69,10 +79,166 @@
                     </div>
 
                     <div class="features">
+
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="features-title">
-                                    <h2>Manage Project </h2>
+                                    <h2>Code Analysis</h2>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="feature">
+                                    <h3 class="feature-title">Real time compilation</h3>
+                                    <div class="feature-content">
+                                        <img src="img/features/displayerrors.jpg">
+                                        <p>you don't have to deploy the code to know your syntax errors</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="feature">
+                                    <h3 class="feature-title">Code suggestion </h3>
+                                    <div class="feature-content">
+                                       <img src="img/features/suggestions.jpg">
+                                       <p>CTRL+SPACE show suggestions</p> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="feature">
+                                    <h3 class="feature-title">Navigator </h3>
+                                    <div class="feature-content">
+                                        <img src="img/features/navigator.jpg">
+                                        <p>Navigate through the members of a class</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="feature">
+                                    <h3 class="feature-title">Packages </h3>
+                                    <div class="feature-content">
+                                        <img src="img/features/package.jpg">
+                                        <p>logical package management with the @@package tag</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="features-title">
+                                    <h2>Code Management</h2>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="feature">
+                                    <h3 class="feature-title">Code styling</h3>
+                                    <div class="feature-content">
+                                        <img src="img/features/codestyling.jpg">
+                                        <p>Define the code style to follow</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="feature">
+                                    <h3 class="feature-title">Code formatting</h3>
+                                    <div class="feature-content">
+                                        <img src="img/features/codeformatting.jpg">
+                                        <p>Format the code according to the code style</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="feature">
+                                    <h3 class="feature-title">Class members ordering</h3>
+                                    <div class="feature-content">
+                                        <img src="img/features/classmembersordering.jpg">
+                                        <p>Organize the code according to the code style</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="feature">
+                                    <h3 class="feature-title">Code Generator </h3>
+                                    <div class="feature-content">
+                                        <img src="img/features/generatecode.jpg">
+                                        <p>Generate code from predefined templates (ALT+INSERT)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="feature">
+                                    <h3 class="feature-title">Code templates </h3>
+                                    <div class="feature-content">
+                                        <img src="img/features/codetemplate.jpg">
+                                        <p>Add your own snippets</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="features-title">
+                                    <h2>Tools </h2>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="feature">
+                                    <h3 class="feature-title">Console </h3>
+                                    <div class="feature-content">
+                                        <img src="img/features/console.jpg">
+                                        <p>Console to evaluate expressions and code fragments</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="feature">
+                                    <h3 class="feature-title">Metadata management </h3>
+                                    <div class="feature-content">
+                                        <img src="img/features/metadata.jpg">
+                                        <p>...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="feature">
+                                    <h3 class="feature-title">Search </h3>
+                                    <div class="feature-content">
+                                        <img src="img/features/search.jpg">
+                                        <p>...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="features-title">
+                                    <h2>Project Management</h2>
                                 </div>
                             </div>
                         </div>
@@ -103,7 +269,7 @@
                                     <h3 class="feature-title">Save updates </h3>
                                     <div class="feature-content">
                                         <img src="img/features/saveupdated.jpg">
-                                        <p>Save updated files to Salesforce.</p>
+                                        <p>Save only the files tha were updated</p>
                                     </div>
                                 </div>
                             </div>
@@ -119,73 +285,18 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-xs-12">
-                                <div class="features-title">
-                                    <h2>Code Analysis </h2>
+                            <div class="col-xs-6">
+                                <div class="feature">
+                                    <h3 class="feature-title">File templates</h3>
+                                    <div class="feature-content">
+                                        <img src="img/features/newfile.jpg">
+                                        <p>Templates to create Classes, Triggers, Objects, Pages</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <div class="feature">
-                                    <h3 class="feature-title">Code styling</h3>
-                                    <div class="feature-content">
-                                        <img src="img/features/codestyling.jpg">
-                                        <p>...</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-6">
-                                <div class="feature">
-                                    <h3 class="feature-title">Code formatting</h3>
-                                    <div class="feature-content">
-                                        <img src="img/features/codeformatting.jpg">
-                                        <p>ALT+SHIFT+F format code</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <div class="feature">
-                                    <h3 class="feature-title">Class members ordering</h3>
-                                    <div class="feature-content">
-                                        <img src="img/features/classmembersordering.jpg">
-                                        <p>...</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-6">
-                                <div class="feature">
-                                    <h3 class="feature-title">Navigator </h3>
-                                    <div class="feature-content">
-                                        <img src="img/features/navigator.jpg">
-                                        <p>...</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <div class="feature">
-                                    <h3 class="feature-title">Code suggestion </h3>
-                                    <div class="feature-content">
-                                       <img src="img/features/suggestions.jpg">
-                                       <p>CTRL+SPACE show suggestions</p> 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-6">
-                                <div class="feature">
-                                    <h3 class="feature-title">Console </h3>
-                                    <div class="feature-content">
-                                        <img src="img/features/console.jpg">
-                                        <p>Console to evaluate expressions and code fragments</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
 
                         <div class="row">
                             <div class="col-xs-12">
@@ -198,10 +309,10 @@
                         <div class="row">
                             <div class="col-xs-6">
                                 <div class="feature">
-                                    <h3 class="feature-title">Run unit test </h3>
+                                    <h3 class="feature-title">Unit test execution</h3>
                                     <div class="feature-content">
                                         <img src="img/features/tests.jpg">
-                                        <p>...</p>
+                                        <p>Run unit tests from netbeans</p>
                                     </div>
                                 </div>
                             </div>
@@ -210,94 +321,12 @@
                                     <h3 class="feature-title">Unit test reports</h3>
                                     <div class="feature-content">
                                         <img src="img/features/testsreport.jpg">
-                                        <p>...</p>
+                                        <p>Review your classes coverage</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-
-
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <div class="feature">
-                                    <h3 class="feature-title">Display errors </h3>
-                                    <div class="feature-content">
-                                        <img src="img/features/displayerrors.jpg">
-                                        <p>...</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="features-title">
-                                    <h2>Code Assistant </h2>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <div class="feature">
-                                    <h3 class="feature-title">Code Generator Integration </h3>
-                                    <div class="feature-content">
-                                        <img src="img/features/generatecode.jpg">
-                                        <p>ALT+INSERT generate code</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-6">
-                                <div class="feature">
-                                    <h3 class="feature-title">Code templates </h3>
-                                    <div class="feature-content">
-                                        <img src="img/features/codetemplate.jpg">
-                                        <p>Code templates are prewritten snippets...</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <div class="feature">
-                                    <h3 class="feature-title">Salesforce file </h3>
-                                    <div class="feature-content">
-                                        <img src="img/features/newfile.jpg">
-                                        <p>Templates to create Classes, Triggers, Objects, Pages</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-6">
-                                <div class="feature">
-                                    <h3 class="feature-title">Update metadata </h3>
-                                    <div class="feature-content">
-                                        <img src="img/features/metadata.jpg">
-                                        <p>...</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <div class="feature">
-                                    <h3 class="feature-title">Packages </h3>
-                                    <div class="feature-content">
-                                        <img src="img/features/package.jpg">
-                                        <p>...</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-6">
-                                <div class="feature">
-                                    <h3 class="feature-title">Search </h3>
-                                    <div class="feature-content">
-                                        <img src="img/features/search.jpg">
-                                        <p>...</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -318,7 +347,7 @@
                         </div>
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon3">URL</span>
-                            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" value="http://10.31.2.240/oblivion/InternalUpdateCenter/updates/updates.xml.gz" readonly>
+                            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" value="http://10.31.2.240/oblivion/updates/updates.xml.gz" readonly>
                         </div>
                         <div class="step-path">
                             <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> Tools->Plugins

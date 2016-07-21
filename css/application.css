@@ -53,12 +53,13 @@ body {
     left: 0;
     width: 100%;
     z-index: 50;
-    background-color: #FFFFFF;
+    background-color: #049cdb;
 }
 
 #main-navbar .salesforce-logo {
     width: 100px;
     height: 60px;
+    margin-top: -15px;
 }
 
 #scroll-up {
@@ -106,4 +107,43 @@ body {
     border-radius: 10px;
     border: solid 2px rgba(255, 255, 255, 0.50);
     padding: 5px;
+}
+
+.nav-tabs {
+    float: right;
+}
+
+.nav-tabs > li {
+    margin-top: 20px;
+}
+
+.nav-tabs > li > a {
+    color: #ffffff;
+    border: medium none;
+}
+.nav-tabs > li > a:hover{
+    background-color: #ffffff !important;
+    color: #049cdb;
+    border: medium none;
+    border-radius: 0;
+}
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover {
+    background-color: #ffffff !important;
+}
+
+.navbar-brand {
+    color: white;
+    font-size: xx-large;
+    float:none;
+    /*margin-top: 10px;*/
+}
+
+.navbar-header {
+    float: left;
+    position: absolute;
+    padding: 15px;
+    width: 100%;
+    text-align: center;
 }
