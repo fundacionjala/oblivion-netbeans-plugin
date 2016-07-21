@@ -1,0 +1,5 @@
+Oblivion comes from the need to have a fully featured development environment for the force.com platform.
+
+Our main goal is to provide tools that are standard among Integraged Development Environments.
+
+To achieve this goal, we have chosen the Netbeans platform and combined it with Enforce's deployment features in order to provide an integrated environment which allows developers to build force.com applications easily.
