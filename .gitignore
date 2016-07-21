@@ -1,0 +1,38 @@
+# Compiled sources #
+*.class
+*.*~
+
+# Log files #
+*.log
+
+# Orig files #
+*.orig
+
+# Build files #
+/Suite/build
+/Suite/nbproject/private/
+/Suite/nbproject/genfiles.properties
+/Grammar/nbproject/private/
+/Grammar/nbproject/genfiles.properties
+/Grammar/build/
+/Grammar/dist/
+/Oblivion/nbproject/private/
+Oblivion/nbproject/genfiles.properties
+/Oblivion/build/
+/Parsing/nbproject/private/
+/Parsing/nbproject/genfiles.properties
+/Parsing/build/
+/Gradlelibs/build/
+/Gradlelibs/nbproject/private/
+/Gradlelibs/nbproject/genfiles.properties
+/ApexDoc/build
+/ApexDoc/nbproject/private/
+/ApexDoc/nbproject/genfiles.properties
+/ApexDocScanner/build
+/ApexDocScanner/nbproject/private/
+/ApexDocScanner/nbproject/genfiles.properties
+
+# Ignore paths #
+/Grammar/grammar/apex.jj
+/Grammar/grammar/apexLexer.jj
+/Suite/dist/
