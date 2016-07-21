@@ -1,0 +1,28 @@
+public class attributesWithIdentifiersAsKeywords {
+    private String abc                  ;
+    private String transient            ;
+    private String returning            ;
+    private String search               ;
+    private String stat                 ;
+    private String this_month           ;
+    private String convertcurrency      ;
+    private String last_90_days         ;
+    private String last_month           ;
+    private String last_n_days          ;
+    private String last_week            ;
+    private String next_90_days         ;
+    private String next_month           ;
+    private String next_n_days          ;
+    private String next_week            ;
+    private String savepoint            ;
+    private String this_week            ;
+    private String tolabel              ;
+    private String tomorrow             ;
+    private String yesterday            ;
+    private String sharing              ;
+    private String get                  ;
+    private String after                ;
+    private String before               ;
+    private String first                ;
+    private String last                 ;
+}

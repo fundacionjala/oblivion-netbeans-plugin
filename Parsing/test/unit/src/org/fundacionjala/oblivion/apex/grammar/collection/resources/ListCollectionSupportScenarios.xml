@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tests>
+    <test id="List instance">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                List<String> colors = new list<String>();
+            }
+        }
+    ]]>
+    </test>
+    <test id="Initialize String array with a list instance">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                String[] colors = new list<String>();
+            }
+        }
+    ]]>
+    </test>
+    <test id="Initialize a list instance with a String array">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                List<String> colors = new String[1];
+            }
+        }
+    ]]>
+    </test>
+    <test id="Initialize a list instance with empty values">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                List<String> colors = new list<String>{};
+            }
+        }
+    ]]>
+    </test>
+    <test id="Initialize a list instance with values">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                List<String> colors = new list<String>{1, 2, 3};
+            }
+        }
+    ]]>
+    </test>
+    <test id="Initialize a list with nested lists">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                List<list<list<String>>> colors = new list<list<list<String>>>();
+            }
+        }
+    ]]>
+    </test>
+    <test id="Declare and initialize a list with other collections">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                List<Set<String>> colors = new list<Set<String>>();
+            }
+        }
+    ]]>
+    </test>
+    <test id="Casting a List reference">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                List<String> colors = (List<String>)a.getList();
+            }
+        }
+    ]]>
+    </test>
+    <test id="List as a function parameter">
+    <![CDATA[
+        public class A {
+            public void test(list<String> item) 
+            {
+            }
+        }
+    ]]>
+    </test>
+</tests>
+

@@ -1,0 +1,3 @@
+virtual public class PublicVirtualClass {
+   
+}

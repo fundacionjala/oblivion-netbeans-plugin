@@ -1,0 +1,366 @@
+/* RESERVED WORDS AND LITERALS */
+TOKEN [IGNORE_CASE]:
+{
+    /* Common keywords */
+
+      < ABSTRACT_KEYWORD: "abstract" >
+    | < ARRAY_KEYWORD: "array" >
+    | < AS_KEYWORD: "as" >
+    | < BREAK_KEYWORD: "break" >
+    | < CATCH_KEYWORD: "catch" >
+    | < CLASS_KEYWORD: "class" >
+    | < CONTINUE_KEYWORD: "continue" >
+    | < DO_KEYWORD: "do" >
+    | < ELSE_KEYWORD: "else" >
+    | < ENUM_KEYWORD: "enum" >
+    | < EXCEPTION_KEYWORD: "exception" >
+    | < EXTENDS_KEYWORD: "extends" >
+    | < FALSE_KEYWORD: "false" >
+    | < FINAL_KEYWORD: "final" >
+    | < FINALLY_KEYWORD: "finally" >
+    | < FOR_KEYWORD: "for" >
+    | < FROM_KEYWORD: "from" >
+    | < IF_KEYWORD: "if" >
+    | < IMPLEMENTS_KEYWORD: "implements" >
+    | < INSTANCEOF_KEYWORD: "instanceof" >
+    | < INT_KEYWORD: "int" >
+    | < INTERFACE_KEYWORD: "interface" >
+    | < LIST_KEYWORD: "list" >
+    | < MAP_KEYWORD: "map" >
+    | < NEW_KEYWORD: "new" >
+    | < NULL_KEYWORD: "null" >
+    | < OVERRIDE_KEYWORD: "override">
+    | < PACKAGE_KEYWORD: "package">
+    | < PRIVATE_KEYWORD: "private" >
+    | < PROTECTED_KEYWORD: "protected" >
+    | < PUBLIC_KEYWORD: "public" >
+    | < RETURN_KEYWORD: "return" >
+    | < STATIC_KEYWORD: "static" >
+    | < SUPER_KEYWORD: "super" >
+    | < THIS_KEYWORD: "this" >
+    | < THROW_KEYWORD: "throw" >
+    | < TRANSIENT_KEYWORD: "transient" >
+    | < TRUE_KEYWORD: "true" >
+    | < TRY_KEYWORD: "try" >
+    | < VOID_KEYWORD: "void" >
+    | < WEBSERVICE_KEYWORD: "webservice" >
+    | < WHILE_KEYWORD: "while" >    
+    | < ITERATOR_KEYWORD: "iterator" >
+
+    /* Reserved keywords for future */
+
+    | < ACTIVATE_KEYWORD: "activate" >
+    | < ANY_KEYWORD: "any" >
+    | < AUTONOMOUS_KEYWORD: "autonomous" >
+    | < BEGIN_KEYWORD: "begin" >
+    | < BIGDECIMAL_KEYWORD: "bigdecimal" >
+    | < BYTE_KEYWORD: "byte" >
+    | < CASE_KEYWORD: "case" >
+    | < CAST_KEYWORD: "cast" >
+    | < CHAR_KEYWORD: "char" >
+    | < COLLECT_KEYWORD: "collect" >
+    | < CONST_KEYWORD: "const" >
+    | < _DEFAULT_KEYWORD: "default" >
+    | < END_KEYWORD: "end" >
+    | < EXIT_KEYWORD: "exit" >
+    | < EXPORT_KEYWORD: "export" >
+    | < FLOAT_KEYWORD: "float" >
+    | < GOTO_KEYWORD: "goto" >
+    | < GROUP_KEYWORD: "group" >
+    | < HAVING_KEYWORD: "having" >
+    | < HINT_KEYWORD: "hint" >
+    | < IMPORT_KEYWORD: "import" >
+    | < INNER_KEYWORD: "inner" >
+    | < INTO_KEYWORD: "into" >
+    | < JOIN_KEYWORD: "join" >
+    | < LOOP_KEYWORD: "loop" >
+    | < NUMBER_KEYWORD: "number" >
+    | < OF_KEYWORD: "of" >
+    | < OUTER_KEYWORD: "outer" >
+    | < PARALLEL_KEYWORD: "parallel" >
+    | < RETRIEVE_KEYWORD: "retrieve" >
+    | < RETURNING_KEYWORD: "returning" >
+    | < SEARCH_KEYWORD: "search" >
+    | < SHORT_KEYWORD: "short" >
+    | < STAT_KEYWORD: "stat" >
+    | < SWITCH_KEYWORD: "switch" >
+    | < SYNCHRONIZED_KEYWORD: "synchronized" >
+    | < THEN_KEYWORD: "then" >
+    | < TRANSACTION_KEYWORD: "transaction" >
+    | < WHEN_KEYWORD: "when" >
+
+    /* Apex keywords */
+
+    | < ANDLITERAL_KEYWORD: "and" >
+    | < ASC_KEYWORD: "asc" >
+    | < BULK_KEYWORD: "bulk" >
+    | < BY_KEYWORD: "by" >
+    | < COMMIT_KEYWORD: "commit" >
+    | < CONVERTCURRENCY_KEYWORD: "convertcurrency" >
+    | < DELETE_KEYWORD: "delete" >
+    | < DESC_KEYWORD: "desc" >
+    | < GLOBAL_KEYWORD: "global" >
+    | < INSERT_KEYWORD: "insert" >
+    | < LIKE_KEYWORD: "like" >
+    | < LIMIT_KEYWORD: "limit" >
+    | < NOT_KEYWORD: "not" >
+    | < NULLS_KEYWORD: "nulls" >
+    | < MERGE_KEYWORD: "merge" >
+    | < ON_KEYWORD: "on" >
+    | < OR_KEYWORD: "or">
+    | < ROLLBACK_KEYWORD: "rollback" >
+    | < SAVEPOINT_KEYWORD: "savepoint" >
+    | < SELECT_KEYWORD: "select" >
+    | < TESTMETHOD_KEYWORD: "testmethod" >
+    | < TOLABEL_KEYWORD: "tolabel" >
+    | < TRIGGER_KEYWORD: "trigger" >
+    | < UNDELETE_KEYWORD: "undelete" >
+    | < UPDATE_KEYWORD: "update" >
+    | < UPSERT_KEYWORD: "upsert" >
+    | < USING_KEYWORD: "using" >
+    | < VIRTUAL_KEYWORD: "virtual" >
+    | < WHERE_KEYWORD: "where" >
+    /* Tokens moved from apexLexer for SOQL RULES */
+    | < ORDER_KEYWORD: "order" >
+    | < FIRST_KEYWORD: "first" >
+    | < LAST_KEYWORD: "last" >
+    | < IN_KEYWORD: "in" >
+    | < EXCLUDES_KEYWORD: "excludes" >
+    | < INCLUDES_KEYWORD: "includes" >
+    | < OFFSET_KEYWORD: "offset">
+    | < DATA_KEYWORD: "data">
+    | < CATEGORY_KEYWORD: "category">
+    | < ABOVE_KEYWORD: "above">
+    | < AT_KEYWORD: "at">
+    | < ABOVE_OR_BELOW_KEYWORD : "above_or_below">
+     /* Tokens for SOSL RULES */
+    | < FIND_KEYWORD: "find" >
+    | < ALL_FIELDS_KEYWORD: "all fields" >
+    | < EMAIL_FIELDS_KEYWORD: "email fields" >
+    | < NAME_FIELDS_KEYWORD: "name fields" >
+    | < PHONE_FIELDS_KEYWORD: "phone fields" >
+    | < SIDEBAR_FIELDS_KEYWORD: "sidebar fields" >
+    | < TRACKING_KEYWORD: "tracking" >
+    | < VIEWSTAT_KEYWORD: "viewstat" >
+    | < DIVISION_KEYWORD: "division" >
+    | < BELOW_KEYWORD: "below" >
+    | < NETWORK_KEYWORD: "network" >
+    | < SNIPPET_KEYWORD: "snippet" >
+    | < TARGET_LENGTH_KEYWORD: "target_length" >
+
+    /* TODO: These tokens should only be on the lexer. */
+    | < SHARING_KEYWORD: "sharing" >
+    | < WITHOUT_OTHER: "without" >
+    | < WITH_KEYWORD: "with" >
+    | < SET_KEYWORD: "set" >
+    | < GET_KEYWORD: "get" >
+    | < AFTER_KEYWORD: "after" >
+    | < BEFORE_KEYWORD: "before" >
+
+    /*  SOQLDateLiteral */
+    | < TODAY_KEYWORD: "today" >
+    | < YESTERDAY_KEYWORD: "yesterday" >
+    | < TOMORROW_KEYWORD: "tomorrow" >
+    | < LAST_WEEK_KEYWORD: "last_week" >
+    | < THIS_WEEK_KEYWORD: "this_week" >
+    | < NEXT_WEEK_KEYWORD: "next_week" >
+    | < LAST_MONTH_KEYWORD: "last_month" >
+    | < THIS_MONTH_KEYWORD: "this_month" >
+    | < NEXT_MONTH_KEYWORD: "next_month" >
+    | < LAST_90_DAYS_KEYWORD: "last_90_days" >
+    | < NEXT_90_DAYS_KEYWORD: "next_90_days" >
+    | < THIS_QUARTER_KEYWORD: "this_quarter" >
+    | < LAST_QUARTER_KEYWORD: "last_quarter" >
+    | < NEXT_QUARTER_KEYWORD: "next_quarter" >
+    | < THIS_YEAR_KEYWORD: "this_year" >
+    | < LAST_YEAR_KEYWORD: "last_year" >
+    | < NEXT_YEAR_KEYWORD: "next_year" >
+    | < THIS_FISCAL_QUARTER_KEYWORD: "this_fiscal_quarter" >
+    | < LAST_FISCAL_QUARTER_KEYWORD: "last_fiscal_quarter" >
+    | < NEXT_FISCAL_QUARTER_KEYWORD: "next_fiscal_quarter" >
+    | < THIS_FISCAL_YEAR_KEYWORD: "this_fiscal_year" >
+    | < LAST_FISCAL_YEAR_KEYWORD: "last_fiscal_year" >
+    | < NEXT_FISCAL_YEAR_KEYWORD: "next_fiscal_year" >
+    | < LAST_N_DAYS_KEYWORD: "last_n_days" >
+    | < NEXT_N_DAYS_KEYWORD: "next_n_days" >
+    | < NEXT_N_WEEKS_KEYWORD: "next_n_weeks" >
+    | < LAST_N_WEEKS_KEYWORD: "last_n_weeks" >
+    | < NEXT_N_MONTHS_KEYWORD: "next_n_months" >
+    | < LAST_N_MONTHS_KEYWORD: "last_n_months" >
+    | < NEXT_N_QUARTERS_KEYWORD: "next_n_quarters" >
+    | < LAST_N_QUARTERS_KEYWORD: "last_n_quarters" >
+    | < NEXT_N_YEARS_KEYWORD: "next_n_years" >
+    | < LAST_N_YEARS_KEYWORD: "last_n_years" >
+    | < NEXT_N_FISCAL_QUARTERS_KEYWORD: "next_n_fiscal_quarters" >
+    | < LAST_N_FISCAL_QUARTERS_KEYWORD: "last_n_fiscal_quarters" >
+    | < NEXT_N_FISCAL_YEARS_KEYWORD: "next_n_fiscal_years" >
+    | < LAST_N_FISCAL_YEARS_KEYWORD: "last_n_fiscal_years" >
+    
+}
+
+/* Not Keywords */
+TOKEN [IGNORE_CASE]:
+{
+    < SINGLE_QUOTE_OPERATOR: "'" >
+}
+
+/* LITERALS */
+TOKEN :
+{
+    < DATE_LITERAL_EXPRESSION: <DATE_LITERAL> ("T" <TIME_LITERAL> ":" <SECOND_LITERAL> ("Z" | ("+" | "-") <TIME_LITERAL> ))? >
+    | 
+    < #DATE_LITERAL: ["1"-"9"] <NUMBER_LITERAL> <NUMBER_LITERAL> <NUMBER_LITERAL> "-" ("0" <NUMBER_LITERAL> | "1" ["0"-"2"]) "-" (["0"-"2"] <NUMBER_LITERAL> | "3" ["0"-"1"]) >
+    | 
+    < #TIME_LITERAL: (["0"-"1"] <NUMBER_LITERAL> | "2" ["0"-"3"]) ":" ["0"-"5"] <NUMBER_LITERAL> >
+    |
+    < #SECOND_LITERAL: ["0"-"5"] <NUMBER_LITERAL> >
+    |
+    < INTEGER_LITERAL_NUMBER:
+        <DECIMAL_LITERAL> (["l","L"])?
+        | <HEX_LITERAL> (["l","L"])?
+        | <OCTAL_LITERAL> (["l","L"])?
+    >
+    |
+    < #DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* >
+    |
+    < #HEX_LITERAL: "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ >
+    |
+    < #OCTAL_LITERAL: "0" (["0"-"7"])* >
+    |
+    < FLOATING_POINT_LITERAL_NUMBER:
+        <DECIMAL_FLOATING_POINT_LITERAL>
+        | <HEXADECIMAL_FLOATING_POINT_LITERAL>
+    >
+    |
+    < #DECIMAL_FLOATING_POINT_LITERAL:
+        (["0"-"9"])+ <DOT_SEPARATOR> (["0"-"9"])* (<DECIMAL_EXPONENT_NUMBER>)? (["f","F","d","D"])?
+        | <DOT_SEPARATOR> (["0"-"9"])+ (<DECIMAL_EXPONENT_NUMBER>)? (["f","F","d","D"])?
+        | (["0"-"9"])+ <DECIMAL_EXPONENT_NUMBER> (["f","F","d","D"])?
+        | (["0"-"9"])+ (<DECIMAL_EXPONENT_NUMBER>)? ["f","F","d","D"]
+    >
+    |
+    < #DECIMAL_EXPONENT_NUMBER: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+    |
+    < #HEXADECIMAL_FLOATING_POINT_LITERAL:
+        "0" ["x", "X"] (["0"-"9","a"-"f","A"-"F"])+ (<DOT_SEPARATOR>)? <HEXADECIMAL_EXPONENT_NUMBER> (["f","F","d","D"])?
+        | "0" ["x", "X"] (["0"-"9","a"-"f","A"-"F"])* <DOT_SEPARATOR> (["0"-"9","a"-"f","A"-"F"])+ <HEXADECIMAL_EXPONENT_NUMBER> (["f","F","d","D"])?
+    >
+    |
+    < #HEXADECIMAL_EXPONENT_NUMBER: ["p","P"] (["+","-"])? (["0"-"9"])+ >
+    |
+
+    < STRING_LITERAL_STRING:
+        "'"
+        (
+            (~["'","\\","\n","\r"])
+            | ("\\"
+                ( ["n","t","b","r","f","\\","'","\""]
+                | ["0"-"7"] ( ["0"-"7"] )?
+                | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+                )
+              )
+        )*
+        "'"
+    >
+}
+
+/* IDENTIFIERS */
+TOKEN :
+{
+    < IDENTIFIER: <LETTER_LITERAL> ( <LETTER_LITERAL> | <NUMBER_LITERAL> | <UNDERSCORE> )* >
+    |
+    < #LETTER_LITERAL:
+    [   // all chars for which Character.isIdentifierStart is true
+        "A"-"Z",
+        "a"-"z"
+    ]
+    >
+    |
+    < #NUMBER_LITERAL:
+        [   // all chars for which Character.isIdentifierPart is true
+            "0"-"9"
+        ]
+    >
+    | 
+    <UNDERSCORE : "_" >
+
+}
+
+/* INVALID CHARACTERS */
+TOKEN :
+{
+    < INVALID_CHARACTER :  
+        ~[  //All the characters that not is contained in list  not belong to 
+            //Apex, then it are invalid characters 
+            "a"-"z","A"-"Z","0"-"9", //Alphabet
+            "{","}","(",")","[","]","<",">", //Grouping symbols
+            "/","*","+","-","%","&","|",":", //Operators
+            "?","=","!","@",",","_",";","." //Special characters
+        ]
+    >
+}
+
+/* SEPARATORS */
+TOKEN :
+{
+    < LPAREN_SEPARATOR: "(" >
+    | < RPAREN_SEPARATOR: ")" >
+    | < LBRACE_SEPARATOR: "{" >
+    | < RBRACE_SEPARATOR: "}" >
+    | < LBRACKET_SEPARATOR: "[" >
+    | < RBRACKET_SEPARATOR: "]" >
+    | < SEMICOLON_SEPARATOR: ";" >
+    | < COMMA_SEPARATOR: "," >
+    | < DOT_SEPARATOR: "." >
+    | < AT_SEPARATOR: "@" >
+}
+
+/* OPERATORS */
+TOKEN :
+{
+    < ASSIGN_OPERATOR: "=" >
+    | < LT_OPERATOR: "<" >
+    | < GT_OPERATOR: ">" >
+    | < BANG_OPERATOR: "!" >
+    | < TILDE_OPERATOR: "~" >
+    | < HOOK_OPERATOR: "?" >
+    | < COLON_OPERATOR: ":" >
+    | < MAP_OPERATOR: "=>" >
+    | < EQ_OPERATOR: "==" >
+    | < LE_OPERATOR: "<=" >
+    | < GE_OPERATOR: ">=" >
+    | < NE_OPERATOR: "!=" >
+    | < SC_OR_OPERATOR: "||" >
+    | < SC_AND_OPERATOR: "&&" >
+    | < INCR_OPERATOR: "++" >
+    | < DECR_OPERATOR: "--" >
+    | < PLUS_OPERATOR: "+" >
+    | < MINUS_OPERATOR: "-" >
+    | < STAR_OPERATOR: "*" >
+    | < SLASH_OPERATOR: "/" >
+    | < BIT_AND_OPERATOR: "&" >
+    | < BIT_OR_OPERATOR: "|" >
+    | < XOR_OPERATOR: "^" >
+    | < REM_OPERATOR: "%" >
+    | < LSHIFT_OPERATOR: "<<" >
+    | < PLUSASSIGN_OPERATOR: "+=" >
+    | < MINUSASSIGN_OPERATOR: "-=" >
+    | < STARASSIGN_OPERATOR: "*=" >
+    | < SLASHASSIGN_OPERATOR: "/=" >
+    | < ANDASSIGN_OPERATOR: "&=" >
+    | < ORASSIGN_OPERATOR: "|=" >
+    | < XORASSIGN_OPERATOR: "^=" >
+    | < REMASSIGN_OPERATOR: "%=" >
+    | < LSHIFTASSIGN_OPERATOR: "<<=" >
+    | < RSIGNEDSHIFTASSIGN_OPERATOR: ">>=" >
+    | < RUNSIGNEDSHIFTASSIGN_OPERATOR: ">>>=" >
+    /* for SOQL rules*/
+    | < DIFFERENT_OPERATOR: "<>" >
+
+}
+
+/* END OF FILE */
+TOKEN :
+{
+    < END_OF_FILE_WHITESPACE: "\u001a" >
+}

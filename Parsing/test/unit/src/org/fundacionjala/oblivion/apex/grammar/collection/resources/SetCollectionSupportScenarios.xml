@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tests>
+    <test id="Initialize Set instance">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                Set<String> colors = new set<String>();
+            }
+        }
+    ]]>
+    </test>
+    <test id="Initialize a set instance with empty values">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                Set<String> colors = new set<String>{};
+            }
+        }
+    ]]>
+    </test>
+    <test id="Initialize a set instance with values">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                Set<String> colors = new set<String>{1,2,3};
+            }
+        }
+    ]]>
+    </test>
+    <test id="Initialize a set with nested sets">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                Set<SET<set<String>>> colors = new set<set<set<String>>>();
+            }
+        }
+    ]]>
+    </test>
+    <test id="Declare and initialize a Set with other collections">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                Set<List<String>> colors = new Set<list<String>>();
+            }
+        }
+    ]]>
+    </test>
+        <test id="Casting a Set reference">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                set<String> colors = (Set<String>)a.getList();
+            }
+        }
+    ]]>
+    </test>
+    <test id="Set as a function parameter">
+    <![CDATA[
+        public class A {
+            public void test(set<String> item) 
+            {
+            }
+        }
+    ]]>
+    </test>
+</tests>
+

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See harness/README in the NetBeans platform -->
+<!-- for some information on what you could do (e.g. targets to override). -->
+<!-- If you delete this file and reopen the project it will be recreated. -->
+<project name="OblivionPlugin" basedir=".">
+    <description>Builds the module suite OblivionPlugin.</description>
+    <import file="nbproject/build-impl.xml"/>
+
+    <property environment="env"/>
+    <property name="version" value="${env.APP_VERSION}"/>
+    <property name="buildNumber" value="${env.BUILD_NUMBER}"/>
+
+    
+    <target name="-check-oblivion-private-exists">
+        <available property="oblivion.private.exists" file="oblivion/nbproject/private" type="dir" />
+    </target>
+    
+    <target name="-create-oblivion-private-folder" depends="-check-oblivion-private-exists" unless="oblivion.private.exists">
+        <mkdir dir="oblivion/nbproject/private"/>
+    </target>
+    
+    <target name="-check-gradle-private-exists">
+        <available property="gradle.private.exists" file="gradle/nbproject/private" type="dir" />
+    </target>
+    
+    <target name="-create-gradle-private-folder" depends="-check-gradle-private-exists" unless="gradle.private.exists">
+        <mkdir dir="gradlelibs/nbproject/private"/>
+    </target>
+    <target name="init-submodules" depends="-create-oblivion-private-folder, -create-gradle-private-folder">
+        <description>Initializes the submodules to properly set the privates files</description>        
+        <copy file="nbproject/private/platform-private.properties"
+              todir="../oblivion/nbproject/private"
+              overwrite="true"/> 
+        <copy file="nbproject/private/platform-private.properties"
+              todir="../gradlelibs/nbproject/private"
+              overwrite="true"/> 
+        <copy file="nbproject/private/platform-private.properties"
+              todir="../parsing/nbproject/private"
+              overwrite="true"/>     
+    </target>
+    
+    <target name="pack" depends="nbms">
+        <description>Creates a zip files to distribute the Oblivion plugin suite</description>
+        <mkdir dir="${suite.build.dir}/dist" />
+        <zip destfile="${suite.build.dir}/dist/oblivion-suite-bld${buildNumber}.zip"
+             basedir="${suite.build.dir}/updates"
+             includes="*"/>
+        <copy file="../Grammar/dist/Grammar.jar" tofile="${suite.build.dir}/dist/oblivion-grammar-bld${buildNumber}.zip" />
+    </target>
+    
+    <target name="CITest" depends="test">
+        <mkdir dir="${suite.build.dir}/test/unit/results" />
+        <copy todir="${suite.build.dir}/test/unit/results" >
+            <fileset dir="../Parsing/build/test/unit/results/" />
+            <fileset dir="../Gradlelibs/build/test/unit/results/" />
+            <fileset dir="../Oblivion/build/test/unit/results/" />
+        </copy>
+    </target>
+</project>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tests>
+    <test scenario="Class With Annotations" errors=""> 
+        <![CDATA[
+            @isTest 
+            public class A {  }
+        ]]>
+    </test>
+
+    <test scenario="Class With Annotations and Parameters" errors=""> 
+        <![CDATA[
+            @isTest(SeeAllData=true onInstall=false) 
+            public class A {  }
+        ]]>
+    </test>
+
+    <test scenario="Method With Annotations" errors=""> 
+        <![CDATA[
+            public class A { 
+                @RemoteAction 
+                public static void m(){
+                } 
+            }
+        ]]>
+    </test>
+
+    <test scenario="Method With Annotations and Pararmeters" errors=""> 
+        <![CDATA[
+            public class A { 
+                @RestResource(urlMapping='/yourUrl') 
+                public static void m(){
+                } 
+            }
+        ]]>
+    </test>
+
+    <test scenario="Class and methods with annotations" errors=""> 
+        <![CDATA[
+            @Deprecated
+            @isTest(SeeAllData=true onInstall=false)
+            public class A { 
+                @RestResource(urlMapping='/yourUrl') 
+                public static void m(){
+                } 
+
+                @TestVisible
+                @RemoteAction 
+                public static void m2(){
+                } 
+            }
+        ]]> 
+    </test>
+
+    <test scenario="Annotation without name" errors="Unexpected: &quot;@&quot; %nAt line 1, column 1"> 
+        <![CDATA[
+            @()
+            public class A {
+            }
+        ]]> 
+    </test>
+
+    <test scenario="Annotation without closing parenthesis" errors="Unexpected: &quot;public&quot; %nAt line 2, column 1"> 
+        <![CDATA[
+@IsTest(
+public class A {
+}
+        ]]> 
+    </test>
+
+    <test scenario="Annotation with double At keyword" errors="Unexpected: &quot;@&quot; %nAt line 2, column 5"> 
+        <![CDATA[
+public class A {
+    @@RemoteAction
+    public static void m(){}
+}
+        ]]> 
+    </test>
+
+    <test scenario="Annotation without name and arguments" errors="Unexpected: &quot;@&quot; %nAt line 2, column 5"> 
+        <![CDATA[
+public class A {
+    @
+    public static void m(){}
+}
+        ]]> 
+    </test>
+
+    <test scenario="Annotation contain coma between parameters" errors="Unexpected: &quot;,&quot; %nAt line 2, column 47"> 
+        <![CDATA[
+            public class AccountQueryAction {
+                @InvocableMethod(label='Names', description='Returns...')
+                public static List<String> getAccountNames(List<ID> ids) {
+
+                }
+            }
+        ]]> 
+    </test>
+    
+</tests>
+

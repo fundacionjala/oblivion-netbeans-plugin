@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.fundacionjala.oblivion
+OpenIDE-Module-Layer: org/fundacionjala/oblivion/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/fundacionjala/oblivion/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+

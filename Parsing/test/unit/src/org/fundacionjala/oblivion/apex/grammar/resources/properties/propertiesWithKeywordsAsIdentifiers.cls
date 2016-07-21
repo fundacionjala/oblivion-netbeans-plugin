@@ -1,0 +1,31 @@
+public class propertiesWithKeywordsAsIdentifiers {
+    public String abc                  { get; set; }
+    public String transient            { get; set; }
+    public String returning            { get; set; }
+    public String search               { get; set; }
+    public String stat                 { get; set; }
+    public String this_month           { get; set; }
+    public String convertcurrency      { get; set; }
+    public String last_90_days         { get; set; }
+    public String last_month           { get; set; }
+    public String last_n_days          { get; set; }
+    public String last_week            { get; set; }
+    public String next_90_days         { get; set; }
+    public String next_month           { get; set; }
+    public String next_n_days          { get; set; }
+    public String next_week            { get; set; }
+    public String savepoint            { get; set; }
+    public String this_week            { get; set; }
+    public String tolabel              { get; set; }
+    public String tomorrow             { get; set; }
+    public String yesterday            { get; set; }
+    public String sharing              { get; set; }
+    public String get                  { get; set; }
+    public String after                { get; set; }
+    public String before               { get; set; }
+    public String first                { get; set; }
+    public String last                 { get; set; }
+    public String data                 { get; set; }
+    public String offset               { get; set; }
+    public String without              { get; set; }
+}

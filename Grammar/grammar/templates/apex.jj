@@ -1,0 +1,3798 @@
+/* Copyright (c) 2006, Sun Microsystems, Inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *     * Redistributions of source code must retain the above copyright notice,
+ *       this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the Sun Microsystems, Inc. nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+options {
+    JAVA_UNICODE_ESCAPE = true;
+    ERROR_REPORTING = true;
+    STATIC = false;
+    COMMON_TOKEN_ACTION = false;
+    JDK_VERSION = "1.5";
+    BUILD_PARSER = true;
+    IGNORE_CASE = true;
+    USER_CHAR_STREAM = true;
+    TOKEN_EXTENDS = "org.fundacionjala.oblivion.apex.grammar.jcclexer.ApexToken";
+}
+
+PARSER_BEGIN(ApexParser)
+/*
+ * Copyright (c) 2014, Jalasoft and/or its affiliates. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *   - Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *   - Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ *   - Neither the name of Jalasoft or the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package org.fundacionjala.oblivion.apex.grammar.jcclexer;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
+import org.fundacionjala.oblivion.apex.grammar.parser.AbstractParser;
+import org.fundacionjala.oblivion.apex.grammar.parser.ModifierSet;
+import org.fundacionjala.oblivion.apex.grammar.parser.exceptions.*;
+import com.sun.source.tree.AnnotationTree;
+import com.sun.source.tree.BlockTree;
+import com.sun.source.tree.BinaryTree;
+import com.sun.source.tree.CatchTree;
+import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.tree.ExpressionStatementTree;
+import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.IdentifierTree;
+import com.sun.source.tree.LiteralTree;
+import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.NewArrayTree;
+import com.sun.source.tree.NewClassTree;
+import com.sun.source.tree.StatementTree;
+import com.sun.source.tree.Tree;
+import com.sun.source.tree.TryTree;
+import com.sun.source.tree.VariableTree;
+
+import javax.lang.model.element.Name;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import org.fundacionjala.oblivion.apex.grammar.ast.AccessorTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.ConstructorTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.PairExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.PropertyTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.SOQLExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.SOQLExpressionSelectTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.SOQLExpressionFromTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.SOQLExpressionWhereTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.SOQLConditionExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.SOQLFromArgumentTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.SOQLLimitExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.SOQLOffsetExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.SOQLOrderByExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.SOQLGroupByExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.SOQLFieldExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.SOQLSetExpressionValuesTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.DMLOperationTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.DMLOperationEnum;
+import org.fundacionjala.oblivion.apex.grammar.ast.DMLUpsertTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.DMLMergeTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.ModifiersTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.SOQLSelectFunctionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.trigger.TriggerCompilationUnitTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.trigger.TriggerDeclarationTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.trigger.TriggerParameterTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.trigger.TriggerType;
+import org.fundacionjala.oblivion.apex.grammar.ast.trigger.TriggerOperation;
+import org.fundacionjala.oblivion.apex.grammar.ast.sosl.SOSLSearchGroupType;
+import org.fundacionjala.oblivion.apex.grammar.ast.sosl.SOSLUpdateType;
+import org.fundacionjala.oblivion.apex.grammar.ast.sosl.SOSLWithDivisionFilterExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.sosl.SOSLDataCategoryOperator;
+import org.fundacionjala.oblivion.apex.grammar.ast.sosl.SOSLDataCategoryExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.sosl.SOSLWithDataCategoryExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.sosl.SOSLWithNetworkExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.sosl.SOSLWithSnippetExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.sosl.SOSLUpdateExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.sosl.SOSLObjectFieldExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.sosl.SOSLReturningExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.sosl.SOSLInExpressionTree;
+import org.fundacionjala.oblivion.apex.grammar.ast.sosl.SOSLFindExpressionTree;
+
+/**
+ * Grammar to parse Apex language.
+ * @author Sreenivasa Viswanadha - Simplified and enhanced for 1.5
+ */
+public class ApexParser extends AbstractParser {
+
+    /**
+     * Helps to define the proper CharStream instance to be used for parsing
+     */
+    public ApexParser(Reader reader) {
+        this(new ApexParserCharStream(new BufferedReader(reader)));
+        token_source = new ParserTokenManagerWrapper(new ApexParserCharStream(new BufferedReader(reader)));
+    }
+
+    /**
+     * Creates a new instance of the class with the given InputStream to read the tokens
+     *
+     * @param reader the InputStream to read the tokens
+     */
+    public ApexParser(InputStream reader) {
+        this(new InputStreamReader(reader));
+    }
+
+    public class Tuple {
+        public Object treeObject;
+        public Type treeType;
+        Tuple() {
+            treeObject = null;
+            treeType = Type.Empty;
+        }
+    }
+
+    public enum Type {
+        Empty,
+        Arguments,
+        ExpressionSosl,
+        ExpressionSql
+    }
+}
+
+PARSER_END(ApexParser)
+
+/* WHITE SPACE */
+SKIP :
+{
+    < WHITESPACE:
+        " "
+      | "\t"
+      | "\n"
+      | "\r"
+      | "\f"
+    >
+}
+
+/* COMMENTS */
+MORE :
+{
+    "/*" : IN_MULTI_LINE_COMMENT
+}
+
+SKIP :
+{
+    <SINGLE_LINE_COMMENT: "//" (~["\n", "\r"])* ("\n" | "\r" | "\r\n")?>
+}
+
+<IN_MULTI_LINE_COMMENT>
+SKIP :
+{
+    <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+MORE :
+{
+    < ~[] >
+}
+
+
+// the tokens will be copied here by deployment task
+@@@template-placeholder@@@
+
+/* >'s need special attention due to generics syntax. */
+TOKEN :
+{
+    < RUNSIGNEDSHIFT_OPERATOR: ">>>" >
+    {
+        matchedToken.kind = GT_OPERATOR;
+        matchedToken.realKind = RUNSIGNEDSHIFT_OPERATOR;
+        input_stream.backup(2);
+        matchedToken.image = ">";
+    }
+    |
+    < RSIGNEDSHIFT_OPERATOR: ">>" >
+    {
+        matchedToken.kind = GT_OPERATOR;
+        matchedToken.realKind = RSIGNEDSHIFT_OPERATOR;
+        input_stream.backup(1);
+        matchedToken.image = ">";
+    }
+}
+
+/*****************************************
+ * THE APEX LANGUAGE GRAMMAR STARTS HERE *
+ *****************************************/
+
+/*
+ * Program structuring syntax follows.
+ */
+CompilationUnitTree CompilationUnit():
+{
+    Tree typeDecl = null;
+}
+{
+    try {
+        (
+            typeDecl = TypeDeclaration()
+            ( <END_OF_FILE_WHITESPACE> )?
+            ( <STUFF_TO_IGNORE: ~[]> )?
+        )?
+        <EOF>
+    } catch (ParseException ex) {
+        contextErrorRecover(new ContextParseException(ex));
+        if (typeDecl == null) {
+            typeDecl = factory.createEmptyClass();
+        }
+    }
+    {
+        return factory.createCompilationUnit(typeDecl);
+    }
+}
+
+/*
+ * Modifiers. We match all modifiers in a single rule to reduce the chances of
+ * syntax errors for simple modifier mistakes. It will also enable us to give
+ * better error messages.
+ */
+ModifiersTree Modifiers():
+{
+    LinkedHashMap<Integer, Token> modifiers = new LinkedHashMap<Integer, Token>();
+    List<AnnotationTree> annotations = new ArrayList<AnnotationTree>();
+    AnnotationTree annotation;
+    Token modifierToken;
+    Token annotationTypeToken;
+}
+{
+    (
+        LOOKAHEAD(2)
+        (
+           modifierToken = <PUBLIC_KEYWORD>      { modifiers.putIfAbsent(ModifierSet.PUBLIC, modifierToken); }
+           | modifierToken = <STATIC_KEYWORD>    { modifiers.putIfAbsent(ModifierSet.STATIC, modifierToken); }
+           | modifierToken = <PROTECTED_KEYWORD> { modifiers.putIfAbsent(ModifierSet.PROTECTED, modifierToken); }
+           | modifierToken = <PRIVATE_KEYWORD>   { modifiers.putIfAbsent(ModifierSet.PRIVATE, modifierToken); }
+           | modifierToken = <GLOBAL_KEYWORD>    { modifiers.putIfAbsent(ModifierSet.GLOBAL, modifierToken); }
+           | modifierToken = <FINAL_KEYWORD>     { modifiers.putIfAbsent(ModifierSet.FINAL, modifierToken); }
+           | modifierToken = <ABSTRACT_KEYWORD>  { modifiers.putIfAbsent(ModifierSet.ABSTRACT, modifierToken); }
+           | modifierToken = <TRANSIENT_KEYWORD> { modifiers.putIfAbsent(ModifierSet.TRANSIENT, modifierToken); }
+
+           | annotationTypeToken = <VIRTUAL_KEYWORD>    { annotations.add(factory.createAnnotation(annotationTypeToken));  }
+           | annotationTypeToken = <OVERRIDE_KEYWORD>   { annotations.add(factory.createAnnotation(annotationTypeToken));  }
+           | annotationTypeToken = <TESTMETHOD_KEYWORD> { annotations.add(factory.createAnnotation(annotationTypeToken));  }
+           | annotation = Annotation() { annotations.add(annotation); }
+        )
+    )*
+    {
+        return factory.createModifier(modifiers, annotations);
+    }
+}
+
+/*
+ * Declaration syntax follows.
+ */
+Tree TypeDeclaration():
+{
+    ClassTree typeDeclaration;
+    ModifiersTree modifiers;
+}
+{
+    (
+        modifiers = Modifiers()
+        (
+            typeDeclaration = ClassOrInterfaceDeclaration(modifiers)
+            | typeDeclaration = EnumDeclaration(modifiers)
+        )
+   )
+    {
+        return typeDeclaration;
+    }
+}
+
+ClassTree ClassOrInterfaceDeclaration(ModifiersTree modifiers):
+{
+    boolean isInterface = false;
+    Token type = null;
+    Token identifier;
+    Token blockStart = null;
+    Token blockEnd = null;
+    List<Token> sharingRules = new ArrayList<Token>();
+    List<? extends Tree> body;
+    Tree extendsClause = null;
+    List<? extends Tree> implementsClause = new ArrayList<Tree>();
+    ModifiersTree otherModifiers;
+}
+{
+    (
+        (
+            sharingRules = getSharingRules(sharingRules)
+            otherModifiers = Modifiers() 
+            type = <CLASS_KEYWORD> 
+            { modifiers.addModifiers(otherModifiers); }
+            | type = <INTERFACE_KEYWORD> { isInterface = true; }
+        )
+        ( 
+            identifier = AllowedKeywordsAsIdentifier() 
+            | identifier = SpecialKeywordsAsIdentifier() 
+        )
+        [ extendsClause = ExtendsList(isInterface) ]
+        [ implementsClause = ImplementsList(isInterface) ]
+        blockStart = <LBRACE_SEPARATOR>
+        body = ClassOrInterfaceBody(isInterface)
+        blockEnd = <RBRACE_SEPARATOR>
+    )
+    {
+        return factory.createClass(modifiers, sharingRules, type, identifier, blockStart, blockEnd, body, implementsClause, extendsClause);
+    }
+}
+
+List<Token> getSharingRules(List<Token> sharingRules):
+{
+    Token rule;
+    Token sharing;
+}
+{
+    try {
+        (
+            (rule = <WITH_KEYWORD> | rule = <WITHOUT_OTHER>) 
+            sharing = <SHARING_KEYWORD>
+            {
+                sharingRules.add(rule);
+                sharingRules.add(sharing);
+            }
+        )?
+    } catch (ParseException ex) {
+        contextErrorRecover(new ClassTypeException(ex));
+    }
+
+    { return sharingRules; }
+}
+
+Tree ExtendsList(boolean isInterface):
+{
+    boolean extendsMoreThanOne = false;
+    Tree type;
+    Token exceptionToken;
+}
+{
+    <EXTENDS_KEYWORD>
+    ( exceptionToken = <EXCEPTION_KEYWORD> { type = factory.createIdentifier(exceptionToken); }
+      | type = ClassOrInterfaceType() )
+    (
+        <COMMA_SEPARATOR> ClassOrInterfaceType()
+        {
+            extendsMoreThanOne = true;
+        }
+    )*
+    {
+        if (extendsMoreThanOne && !isInterface) {
+            contextErrorRecover(new ParseException("A class cannot extend more than one other class"));
+        }
+        return type;
+    }
+}
+
+List<? extends Tree> ImplementsList(boolean isInterface):
+{
+    List<Tree> implementsList = new ArrayList<Tree>();
+    Tree type;
+}
+{
+    <IMPLEMENTS_KEYWORD> type = ClassOrInterfaceErasureType()
+    {
+        implementsList.add(type);
+    }
+    (
+        <COMMA_SEPARATOR> type = ClassOrInterfaceErasureType()
+        {
+            implementsList.add(type);
+        }
+    )*
+    {
+        if (isInterface) {
+            contextErrorRecover(new ParseException("An interface cannot implement other interfaces"));
+        }
+        return implementsList;
+    }
+}
+
+ClassTree EnumDeclaration(ModifiersTree modifiers):
+{
+    List<? extends ExpressionTree> body = new ArrayList<ExpressionTree>();
+    Token type = null;
+    Token name = null;
+    Token blockStart = null;
+    Token blockEnd = null;
+}
+{
+    try {
+        type = <ENUM_KEYWORD> 
+        (
+            name = AllowedKeywordsAsIdentifier()
+            | name = SpecialKeywordsAsIdentifier() 
+        )
+        blockStart = <LBRACE_SEPARATOR>
+        body = EnumBody()
+        blockEnd = <RBRACE_SEPARATOR>
+    } catch (ParseException ex) {
+        contextErrorRecover(new EnumTypeException(ex));
+    }
+    {
+        return factory.createClass(modifiers, null, type, name, blockStart, blockEnd, body);
+    }
+}
+
+List<? extends ExpressionTree> EnumBody():
+{
+    List<ExpressionTree> identifiers = new ArrayList<ExpressionTree>();
+    Token identifier;
+}
+{
+    ( 
+        identifier = AllowedKeywordsAsIdentifier() 
+        | identifier = SpecialKeywordsAsIdentifier() 
+    )
+    {
+        identifiers.add(factory.createIdentifier(identifier));
+    }
+    (
+        LOOKAHEAD(2) <COMMA_SEPARATOR> 
+        (
+            identifier = AllowedKeywordsAsIdentifier() 
+            | identifier = SpecialKeywordsAsIdentifier()
+        )
+        {
+            identifiers.add(factory.createIdentifier(identifier));
+        }
+    )*
+    {
+        return identifiers;
+    }
+}
+
+List<? extends Tree> ClassOrInterfaceBody(boolean isInterface):
+{
+    List<? extends Tree> member;
+    List<Tree> members = new ArrayList<Tree>();
+}
+{
+    (
+        member = ClassOrInterfaceMember(isInterface)
+        {
+            members.addAll(member);
+        }
+    )*
+    {
+        return members;
+    }
+}
+
+List<? extends Tree> ClassOrInterfaceMember(boolean isInterface):
+{
+    boolean isNestedInterface = false;
+    ModifiersTree modifiers;
+    Tree member;
+    List<VariableTree> variables;
+    StatementTree initializer;
+}
+{
+    LOOKAHEAD( (<STATIC_KEYWORD>)? <LBRACE_SEPARATOR> )
+    initializer = Initializer()
+    {
+        if (isInterface) {
+            contextErrorRecover(new ParseException("An interface cannot have initializers"));
+        }
+        return Collections.singletonList(initializer);
+    }
+    | modifiers = Modifiers() // Just get all the modifiers out of the way.
+    //If you want to do more checks, pass the modifiers down to the member
+    (
+        LOOKAHEAD(2)
+        member = ClassOrInterfaceDeclaration(modifiers)
+        {
+            return Collections.singletonList(member);
+        }
+        | member = EnumDeclaration(modifiers)
+          {
+              return Collections.singletonList(member);
+          }
+        | LOOKAHEAD( (AllowedKeywordsAsIdentifier() | SpecialKeywordsAsIdentifier()) <LPAREN_SEPARATOR> )
+          member = ConstructorDeclaration(modifiers)
+          {
+              return Collections.singletonList(member);
+          }
+        | LOOKAHEAD( Type() ( AllowedKeywordsAsIdentifier() | SpecialKeywordsAsIdentifier() ) ( <COMMA_SEPARATOR> | <ASSIGN_OPERATOR> | <SEMICOLON_SEPARATOR> ) )
+          variables = FieldDeclaration(modifiers)
+          {
+              return variables;
+          }
+        | LOOKAHEAD( Type() (AllowedKeywordsAsIdentifier() | SpecialKeywordsAsIdentifier() ) ( <LBRACE_SEPARATOR> ) )
+          member = PropertyDeclaration(modifiers)
+          {
+              return Collections.singletonList(member);
+          }
+        | member = MethodDeclaration(modifiers)
+          {
+              return Collections.singletonList(member);
+          }
+    )
+    | <SEMICOLON_SEPARATOR>
+      {
+          return Collections.singletonList(factory.createEmptyStatement());
+      }
+}
+
+List<VariableTree> FieldDeclaration(ModifiersTree modifiers):
+{
+    List<VariableTree> variables = new ArrayList<VariableTree>();
+    VariableTree variable;
+    Tree type;
+    Token semicolon;
+}
+{
+    try {
+        // Modifiers are already matched in the caller
+        type = Type() variable = VariableDeclarator(modifiers, type)
+        {
+            variables.add(variable);
+        }
+        (
+            <COMMA_SEPARATOR> variable = VariableDeclarator(modifiers, type)
+            {
+                variables.add(variable);
+            }
+        )*
+        semicolon = <SEMICOLON_SEPARATOR> { factory.setSemicolonToVariableTree(variables, semicolon); }
+
+
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalVariableDeclarationException(ex));
+    }
+    {
+        return variables;
+    }
+}
+
+VariableTree VariableDeclarator(ModifiersTree modifiers, Tree type):
+{
+    Token identifier;
+    ExpressionTree expression;
+}
+{
+    ( 
+        identifier = AllowedKeywordsAsIdentifier()
+        | identifier = SpecialKeywordsAsIdentifier() 
+    )
+    [
+        <ASSIGN_OPERATOR> expression = VariableInitializer()
+        {
+            return factory.createVariable(type, identifier, modifiers, expression);
+        }
+    ]
+    {
+        return factory.createVariable(type, identifier, modifiers);
+    }
+}
+
+ExpressionTree VariableInitializer():
+{
+    ExpressionTree expression;
+    Token thisToken;
+}
+{
+    (
+        LOOKAHEAD(2)
+        expression = Expression()
+        | thisToken = <THIS_KEYWORD> { expression = factory.createIdentifier(thisToken); }
+    )
+    {
+        return expression;
+    }
+}
+
+SOQLExpressionTree ExpressionSql():
+{
+    SOQLExpressionSelectTree expressionSelect;
+    SOQLExpressionFromTree expressionFrom;
+    ExpressionTree optionalExpression = null;
+    List <ExpressionTree> optionalStatements = new ArrayList<ExpressionTree>();
+}
+{
+    (
+        expressionSelect = ExpressionSelect()
+        expressionFrom = ExpressionFrom()
+        (
+            optionalExpression = ExpressionWhere()
+            {
+                optionalStatements.add(optionalExpression);
+            }
+        )?
+        (
+            SoqlWithExpression()
+        )?
+        (
+            <GROUP_KEYWORD> <BY_KEYWORD> optionalExpression = SoqlGroupByExpression()
+            {
+                optionalStatements.add(optionalExpression);
+            }
+        )?
+        (
+            <ORDER_KEYWORD> <BY_KEYWORD> optionalExpression = SoqlOrderByExpression()
+            {
+                optionalStatements.add(optionalExpression);
+            }
+        )?
+        (
+            optionalExpression = SoqlLimitExpression()
+            {
+                optionalStatements.add(optionalExpression);
+            }
+        )?
+        (
+            optionalExpression = SoqlOffsetExpression()
+            {
+                optionalStatements.add(optionalExpression);
+            }
+        )?
+    )
+    {
+        return factory.createSOQLExpression(expressionSelect,expressionFrom,optionalStatements);
+    }
+}
+
+void SoqlWithExpression():
+{}
+{
+    <WITH_KEYWORD>
+    (
+        (
+            LOOKAHEAD(<DATA_KEYWORD> <CATEGORY_KEYWORD> AllowedKeywordsAsIdentifier())
+            <DATA_KEYWORD> <CATEGORY_KEYWORD> AllowedKeywordsAsIdentifier()
+            | SoqlParenthesizedExpression())
+        (
+            ( 
+                <ABOVE_KEYWORD>
+                |<AT_KEYWORD>
+                |<OR_KEYWORD>
+                |<ANDLITERAL_KEYWORD>
+                |<ABOVE_OR_BELOW_KEYWORD>
+            )
+            (
+                AllowedKeywordsAsIdentifier()
+                |(
+                    <LPAREN_SEPARATOR>
+                    AllowedKeywordsAsIdentifier()
+                    (
+                        <COMMA_SEPARATOR> AllowedKeywordsAsIdentifier()
+                    )*
+                    <RPAREN_SEPARATOR>
+                )
+            )
+        )*
+    )
+}
+
+SOQLLimitExpressionTree SoqlLimitExpression():
+{
+    ExpressionTree soqlValue;
+}
+{
+    <LIMIT_KEYWORD> [<COLON_OPERATOR>] soqlValue = SoqlValue()
+    {
+        return factory.createSOQLLimitExpressionTree(soqlValue);
+    }
+}
+
+SOQLOffsetExpressionTree SoqlOffsetExpression():
+{
+    ExpressionTree soqlValue;
+}
+{
+    <OFFSET_KEYWORD> [<COLON_OPERATOR>] soqlValue = SoqlValue()
+    {
+        return factory.createSOQLOffsetExpressionTree(soqlValue);
+    }
+}
+
+SOQLGroupByExpressionTree SoqlGroupByExpression():
+{
+    ExpressionTree soqlGroupByExpression = null;
+    List<MethodInvocationTree> methodInvocations = new ArrayList<MethodInvocationTree>();
+    List<IdentifierTree> identifiers = new ArrayList<IdentifierTree>();
+    List<? extends ExpressionTree> arguments = new ArrayList<ExpressionTree>();
+    Token identifierToken = null;
+}
+{
+    (
+        (
+            identifierToken = AllowedKeywordsAsIdentifier()
+            | identifierToken = SpecialKeywordsAsIdentifier()
+        )
+        [
+            arguments = Arguments()
+        ]
+        {
+            if(arguments.isEmpty()){
+                identifiers.add(factory.createIdentifier(identifierToken));
+            } else {
+                methodInvocations.add(factory.createMethodInvocation(factory.createIdentifier(identifierToken),arguments));
+            }
+        }
+    )
+    (   
+        <COMMA_SEPARATOR>
+        (
+            identifierToken = AllowedKeywordsAsIdentifier()
+            | identifierToken = SpecialKeywordsAsIdentifier()
+        )
+        [
+            arguments = Arguments()
+        ]
+        {
+            if(arguments.isEmpty()){
+                identifiers.add(factory.createIdentifier(identifierToken));
+            } else {
+                methodInvocations.add(factory.createMethodInvocation(factory.createIdentifier(identifierToken),arguments));
+            }
+        }
+    )*
+    {
+        return factory.createSOQLGroupByExpression(identifiers, methodInvocations);
+    }
+    
+}
+
+SOQLOrderByExpressionTree SoqlOrderByExpression():
+{
+    ExpressionTree soqlOrderByExpression = null;
+    Name name;
+    List <IdentifierTree> identifiers = new ArrayList<IdentifierTree>();
+}
+{
+    name = OrderByField()
+    {
+        identifiers.add(factory.createIdentifier(name));
+    }
+    (
+        <COMMA_SEPARATOR> name = OrderByField()
+        {
+            identifiers.add(factory.createIdentifier(name));
+        }
+    )*
+    {
+        return factory.createSOQLOrderByExpression(identifiers);
+    }
+}
+
+Name OrderByField():
+{
+    Name name;
+}
+{
+    name = Name() ( <ASC_KEYWORD> | <DESC_KEYWORD> )? ( <NULLS_KEYWORD> ( <FIRST_KEYWORD> | <LAST_KEYWORD> ) )?
+    {
+        return name;
+    }
+}
+
+SOQLExpressionSelectTree ExpressionSelect():
+{
+    IdentifierTree identifier;
+    SOQLExpressionTree query;
+    SOQLSelectFunctionTree function;
+    List<IdentifierTree> identifiers = new ArrayList<IdentifierTree>();
+    List<SOQLExpressionTree> querys = new ArrayList<SOQLExpressionTree>();
+    List<SOQLSelectFunctionTree> functions = new ArrayList<SOQLSelectFunctionTree>();
+}
+{
+    <SELECT_KEYWORD>
+    (
+
+        LOOKAHEAD(SoqlSelectFunction()) function = SoqlSelectFunction() { functions.add(function); }
+        | LOOKAHEAD(SoqlSelectIdentifier()) identifier = SoqlSelectIdentifier() { identifiers.add(identifier); }
+        | <LPAREN_SEPARATOR> query = ExpressionSql() { querys.add(query); } <RPAREN_SEPARATOR>
+    )
+    (
+        LOOKAHEAD(2)
+        <COMMA_SEPARATOR>
+        (
+            LOOKAHEAD(SoqlSelectFunction()) function = SoqlSelectFunction() { functions.add(function); }
+            | LOOKAHEAD(SoqlSelectIdentifier()) identifier = SoqlSelectIdentifier() { identifiers.add(identifier); }
+            | <LPAREN_SEPARATOR> query = ExpressionSql(){ querys.add(query); } <RPAREN_SEPARATOR>
+        )
+    )*
+    {
+        return factory.createSOQLExpressionSelect(identifiers, functions, querys);
+    }
+}
+
+SOQLSelectFunctionTree SoqlSelectFunction():
+{
+    Name name = null;
+    Name field = null;
+    Name alias = null;
+}
+{
+    name = Name()
+    <LPAREN_SEPARATOR> [ field = Name() ] <RPAREN_SEPARATOR>
+    [ alias = Name() ]
+    {
+        return factory.createSOQLSelectFunction(name, field, alias);
+    }
+}
+
+IdentifierTree SoqlSelectIdentifier():
+{
+    Name identifier;
+}
+{
+    identifier = Name()
+    {
+        return factory.createIdentifier(identifier);
+    }
+}
+
+SOQLExpressionFromTree ExpressionFrom():
+{
+    Token argument;
+    Token alias = null;
+    List<SOQLFromArgumentTree> arguments = new ArrayList<SOQLFromArgumentTree>();
+}
+{
+    <FROM_KEYWORD> (
+        argument = AllowedKeywordsAsIdentifier()
+        (
+            alias = AsSOQLExpression()
+        )?
+        (
+            UsingSOQLExpression()
+        )?
+    )
+    {
+        arguments.add(factory.createSOQLFromArgumentTree(factory.createIdentifier(argument), factory.createIdentifier(alias)));
+    }
+    (
+        <COMMA_SEPARATOR> argument = AllowedKeywordsAsIdentifier()
+        (
+            alias = AsSOQLExpression()
+        )?
+        (
+            UsingSOQLExpression()
+        )?
+    )*
+    {
+        arguments.add(factory.createSOQLFromArgumentTree(factory.createIdentifier(argument), factory.createIdentifier(alias)));
+    }
+    {
+        return factory.createSOQLExpressionFrom(arguments);
+    }
+}
+
+Token AsSOQLExpression():
+{
+    Token token;
+}
+{
+    (<AS_KEYWORD>)? token = AllowedKeywordsAsIdentifier()
+    {
+        return token;
+    }
+}
+
+List<Token> UsingSOQLExpression():
+{
+    List <Token> tokens = new ArrayList<Token>();
+    Token token;
+}
+{
+    <USING_KEYWORD> token = AllowedKeywordsAsIdentifier() { tokens.add(token); }
+    {
+        return tokens;
+    }
+
+}
+
+SOQLExpressionWhereTree ExpressionWhere():
+{
+    ExpressionTree soqlConditionExpression;
+}
+{
+    <WHERE_KEYWORD> soqlConditionExpression = SoqlConditionExpression()
+    {
+        return factory.createSOQLExpressionWhere(soqlConditionExpression);
+    }
+}
+
+SOQLConditionExpressionTree SoqlConditionExpression():
+{
+    ExpressionTree optionsStatement = null;
+}
+{
+    optionsStatement = SoqlOrExpression()
+    {
+        return factory.createSOQLConditionExpression(optionsStatement);
+    }
+}
+
+ExpressionTree SoqlOrExpression():
+{
+    ExpressionTree soqlOrExpression;
+    ExpressionTree left;
+    ExpressionTree right;
+    Token operator;
+}
+{
+    left = SoqlAndExpression()
+    (
+        operator = <OR_KEYWORD> right = SoqlAndExpression()
+        {
+            left = factory.createConditionalOROperation(left, right, operator);
+        }
+    )*
+    {
+        return left;
+    }
+}
+
+ExpressionTree SoqlAndExpression():
+{
+    ExpressionTree soqlAndExpression;
+    ExpressionTree left;
+    ExpressionTree right;
+    Token operator;
+}
+{
+    left = SoqlParenthesizedExpression()
+    (
+        operator = <ANDLITERAL_KEYWORD> right = SoqlParenthesizedExpression()
+        {
+            left = factory.createConditionalAndOperation(left, right, operator);
+        }
+    )*
+    {
+        return left;
+    }
+}
+
+ExpressionTree SoqlParenthesizedExpression():
+{
+    ExpressionTree soqlParenthesizedExpression = null;
+}
+{
+    (
+        <LPAREN_SEPARATOR> soqlParenthesizedExpression = SoqlOrExpression() <RPAREN_SEPARATOR>
+        | soqlParenthesizedExpression = SoqlFieldExpression()
+    )
+    {
+        return soqlParenthesizedExpression;
+    }
+}
+
+SOQLFieldExpressionTree SoqlFieldExpression():
+{
+    ExpressionTree soqlFieldExpression = null;
+    Name name = null;
+    Token operator = null;
+    Token value = null;
+    ExpressionTree expressionValue = null;
+}
+{
+    name = Name()
+    (
+        (
+            (
+                operator = <LIKE_KEYWORD>
+                | operator = <ASSIGN_OPERATOR>
+                | operator = <LT_OPERATOR>
+                | operator = <GT_OPERATOR>
+                | operator = <LE_OPERATOR>
+                | operator = <GE_OPERATOR>
+                | operator = <NE_OPERATOR>
+                | operator = <DIFFERENT_OPERATOR>
+            )
+            expressionValue = SoqlValueRight()
+        )
+        |(
+            (
+                operator = <IN_KEYWORD>
+                | operator = <NOT_KEYWORD>
+                | operator = <EXCLUDES_KEYWORD>
+                | operator = <INCLUDES_KEYWORD>
+            )
+            (
+                [<IN_KEYWORD>](expressionValue = SoqlItems()| expressionValue = SoqlExternalVariable())
+            )
+        )
+
+    )?
+    {
+        return factory.createSOQLFieldExpression(name,operator,expressionValue);
+    }
+}
+
+ExpressionTree SoqlItems():
+{
+    ExpressionTree soqlItems;
+}
+{
+    <LPAREN_SEPARATOR> (soqlItems = SoqlSetExpressionValues()  | soqlItems = ExpressionSql()) <RPAREN_SEPARATOR>
+    {
+        return soqlItems;
+    }
+}
+
+ExpressionTree SoqlExternalVariable():
+{
+    ExpressionTree soqlVariable;
+}
+{
+    <COLON_OPERATOR> soqlVariable = SoqlValue()
+    {
+        return soqlVariable;
+    }
+}
+
+SOQLSetExpressionValuesTree SoqlSetExpressionValues():
+{
+    List <ExpressionTree> soqlSetExpressionValues = new ArrayList<ExpressionTree>();
+    ExpressionTree value = null;
+}
+{
+    (
+        value = SoqlValue()
+        {
+            soqlSetExpressionValues.add(value);
+        }
+        (
+            <COMMA_SEPARATOR> value = SoqlValue()
+            {
+                soqlSetExpressionValues.add(value);
+            }
+        )*
+    )
+    {
+        return factory.createSOQLSetExpressionValues(soqlSetExpressionValues);
+    }
+}
+
+ExpressionTree SoqlValueRight():
+{
+    ExpressionTree soqlValueRight;
+    Token token;
+}
+{
+    (   
+        token = <DATE_LITERAL_EXPRESSION> { soqlValueRight = factory.createIdentifier(token); }
+        | token = SOQLDateLiteral() { soqlValueRight = factory.createIdentifier(token); }
+        | token = SOQLNDateLiteral() <COLON_OPERATOR> <INTEGER_LITERAL_NUMBER> { soqlValueRight = factory.createIdentifier(token); }
+        | soqlValueRight = SoqlExternalVariable()
+        | soqlValueRight = Literal()
+    )
+    {
+        return soqlValueRight;
+    }
+}
+
+ExpressionTree SoqlValue():
+{
+    ExpressionTree soqlValue = null;
+}
+{
+    (
+        soqlValue = Expression()
+    )
+    {
+        return soqlValue;
+    }
+}
+
+
+List<ExpressionTree> ArrayInitializer():
+{
+    List<ExpressionTree> arrayInitializers = new ArrayList<ExpressionTree>();
+    ExpressionTree initializer;
+}
+{
+    (
+        [
+            initializer = VariableInitializer() { arrayInitializers.add(initializer); }
+            ( LOOKAHEAD(2) <COMMA_SEPARATOR> initializer = VariableInitializer() { arrayInitializers.add(initializer); } )*
+        ]
+        [ <COMMA_SEPARATOR> ]
+    )
+    {
+        return arrayInitializers;
+    }
+}
+
+PropertyTree PropertyDeclaration(ModifiersTree modifiers) :
+{
+    Tree type;
+    Token identifier;
+    Token blockStart = null;
+    Token blockEnd = null;
+    List<? extends AccessorTree> accessors;
+}
+{
+    type = Type()
+    (
+        identifier = AllowedKeywordsAsIdentifier()
+        | identifier = SpecialKeywordsAsIdentifier()
+    )
+    blockStart = <LBRACE_SEPARATOR>
+    accessors = AccessorDeclarations()
+    blockEnd = <RBRACE_SEPARATOR>
+    {
+        return factory.createProperty(modifiers, type, identifier, blockStart, blockEnd, accessors);
+    }
+}
+
+List<? extends AccessorTree> AccessorDeclarations() :
+{
+    AccessorTree accessorDeclaration;
+    List<AccessorTree> accessors = new ArrayList<AccessorTree>();
+}
+{
+    try {
+        [accessorDeclaration = AccessorDeclaration() { accessors.add(accessorDeclaration); } ]
+        [accessorDeclaration = AccessorDeclaration() { accessors.add(accessorDeclaration); } ]
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalPropertyDeclarationException(ex));
+    }
+    { return accessors; }
+}
+
+AccessorTree AccessorDeclaration() :
+{
+    BlockTree body = null;
+    IdentifierTree accessor;
+    ModifiersTree modifiers;
+    Token endToken = null;
+}
+{
+    modifiers = Modifiers() accessor = Accesor() 
+    (body = AccessorBody() | endToken = <SEMICOLON_SEPARATOR>)
+    {
+        if(body != null) {
+            return factory.createAccessor(modifiers, accessor, body);
+        } else {
+            return factory.createAccessor(modifiers, accessor, endToken);
+        }
+    }
+}
+
+IdentifierTree Accesor() :
+{
+    Token accessor;
+}
+{
+    (
+        accessor = <GET_KEYWORD>
+        | accessor = <SET_KEYWORD>
+    )
+    {   return factory.createIdentifier(accessor);   }
+}
+
+BlockTree AccessorBody() :
+{
+    BlockTree block;
+}
+{
+    block = Block()
+    {
+        return block;
+    }
+}
+
+MethodTree MethodDeclaration(ModifiersTree modifiers):
+{
+    Tree type;
+    ExpressionTree identifier;
+    List<VariableTree> parameters;
+    BlockTree body = null;
+    Token endToken = null;
+}
+{
+    (
+        type = ResultType()
+        identifier = MethodIdentifier()
+        parameters = FormalParameters()
+        ( 
+            body = Block() | 
+            endToken = <SEMICOLON_SEPARATOR>
+        )
+    )
+    {
+        if(body != null) {
+            return factory.createMethod(modifiers, type, identifier, body, parameters);
+        } else {
+            return factory.createMethod(modifiers, type, identifier, parameters, endToken);
+        }
+    }
+}
+
+List<VariableTree> FormalParameters():
+{
+    VariableTree param;
+    List<VariableTree> parameters = new ArrayList<VariableTree>();
+}
+{
+    try {
+        <LPAREN_SEPARATOR>
+        [
+            param = FormalParameter()
+            {
+                parameters.add(param);
+            }
+            (
+                <COMMA_SEPARATOR> param = FormalParameter()
+                {
+                    parameters.add(param);
+                }
+            )*
+        ]
+        <RPAREN_SEPARATOR>
+    } catch (ParseException ex) {
+        contextErrorRecover(new BadParameterException(ex));
+    }
+    {
+        return parameters;
+    }
+}
+
+VariableTree FormalParameter():
+{
+    Tree type;
+    Token identifier;
+    LinkedHashMap<Integer, Token> modifiers = new LinkedHashMap<Integer, Token>();
+    Token finalKeyword = null;
+}
+{
+    [ finalKeyword = <FINAL_KEYWORD> ] type = Type() ( identifier = AllowedKeywordsAsIdentifier() | identifier = SpecialKeywordsAsIdentifier() )
+    {
+        ModifiersTree modifier = null;
+        if (finalKeyword != null) {
+            modifiers.put(ModifierSet.FINAL, finalKeyword);
+            modifier = factory.createModifier(modifiers);
+        }
+        return factory.createVariable(type, identifier, modifier);
+    }
+}
+
+ConstructorTree ConstructorDeclaration(ModifiersTree modifiers):
+{
+    Token identifierToken;
+    IdentifierTree identifier;
+    MethodInvocationTree explicitInvocation;
+    List<VariableTree> parameters;
+    Collection<? extends StatementTree> statements;
+    List<StatementTree> body = new ArrayList<StatementTree>();
+    Token start;
+    Token end;
+}
+{
+    (identifierToken = AllowedKeywordsAsIdentifier() | identifierToken = SpecialKeywordsAsIdentifier()) parameters = FormalParameters()
+    start = <LBRACE_SEPARATOR>
+    [ LOOKAHEAD(ExplicitConstructorInvocation())
+      explicitInvocation = ExplicitConstructorInvocation()
+      {
+          body.add(factory.createExpressionStatement(explicitInvocation));
+      }
+    ]
+    (
+        statements = BlockStatement()
+        {
+            body.addAll(statements);
+        }
+    )*
+    end = <RBRACE_SEPARATOR>
+    {
+        identifier = factory.createIdentifier(identifierToken);
+        return factory.createConstructor(modifiers, identifier, parameters, body, start, end);
+    }
+}
+
+MethodInvocationTree ExplicitConstructorInvocation():
+{
+    List<? extends ExpressionTree> arguments;
+    Token invocationKeyword;
+}
+{
+    (invocationKeyword = <THIS_KEYWORD> | invocationKeyword = <SUPER_KEYWORD>) arguments = Arguments() <SEMICOLON_SEPARATOR>
+    {
+        //Name name = factory.createName(Collections.singletonList(invocationKeyword));
+        return factory.createMethodInvocation(factory.createIdentifier(invocationKeyword), arguments);
+    }
+}
+
+StatementTree Initializer():
+{
+    StatementTree block;
+    boolean isStatic = false;
+}
+{
+    ( <STATIC_KEYWORD> { isStatic = true; } )? block = InitializerBlock(isStatic)
+    {
+        return block;
+    }
+}
+
+StatementTree InitializerBlock(boolean isStatic):
+{
+    List<? extends StatementTree> member;
+    List<StatementTree> members = new ArrayList<StatementTree>();
+    Token blockStart = null;
+    Token blockEnd = null;
+}
+{
+    blockStart = <LBRACE_SEPARATOR>
+    (
+        member = InitializerBlockMember()
+        {
+            members.addAll(member);
+        }
+    )*
+    blockEnd = <RBRACE_SEPARATOR>
+    {
+        return factory.createBlock(members, isStatic, blockStart, blockEnd);
+    }
+}
+
+List<? extends StatementTree> InitializerBlockMember():
+{
+    ModifiersTree modifiers = factory.createModifier(new LinkedHashMap<Integer, Token>());
+    StatementTree member;
+    List<VariableTree> variables;
+    StatementTree initializer;
+}
+{
+    initializer = InitializerBlock(false)
+    {
+        return Collections.singletonList(initializer);
+    }
+    | LOOKAHEAD(Type() ( identifier = AllowedKeywordsAsIdentifier() | identifier = SpecialKeywordsAsIdentifier()) ( <COMMA_SEPARATOR> | <ASSIGN_OPERATOR> | <SEMICOLON_SEPARATOR> ))
+      variables = FieldDeclaration(modifiers)
+      {
+          return variables;
+      }
+    | LOOKAHEAD(2)
+      member = InitializerBlockStatement()
+      {
+          return Collections.singletonList(member);
+      }
+    | <SEMICOLON_SEPARATOR>
+      {
+          return Collections.singletonList(factory.createEmptyStatement());
+      }
+
+}
+
+StatementTree InitializerBlockStatement():
+{
+    StatementTree statement = null;
+}
+{
+    try {
+        LOOKAHEAD(2)
+        statement = EmptyStatement()
+        | statement = StatementExpression() <SEMICOLON_SEPARATOR>
+        | statement = IfStatement()
+        | statement = WhileStatement()
+        | statement = DoStatement()
+        | statement = ForStatement()
+        | statement = BreakStatement()
+        | statement = ContinueStatement()
+        | statement = ReturnStatement()
+        | statement = ThrowStatement()
+        | statement = TryStatement()
+    } catch (ParseException ex) {
+        ContextParseException contextException = new IllegalStatementException(ex);
+        contextErrorRecover(contextException);
+        statement = factory.createEmptyStatement();
+    }
+    {
+        return statement;
+    }
+}
+
+/*
+ * Type, name and expression syntax follows.
+ */
+Tree Type():
+{
+    Tree type;
+    Tree argumentType;
+    List<Tree> arguments = new ArrayList<Tree>();
+    Token collectionType;
+}
+{
+    (
+        ( collectionType = <MAP_KEYWORD> <LT_OPERATOR>  argumentType = Type() { arguments.add(argumentType); } <COMMA_SEPARATOR> argumentType = Type() { arguments.add(argumentType); } <GT_OPERATOR>)
+        {
+            type = factory.createGenericType(factory.createIdentifier(collectionType) , arguments);
+        }
+        | LOOKAHEAD(2) ( ( collectionType = <LIST_KEYWORD> | collectionType = <SET_KEYWORD> | collectionType = <ITERATOR_KEYWORD>) <LT_OPERATOR>  argumentType = Type() { arguments.add(argumentType); } <GT_OPERATOR> )
+            {
+                type = factory.createGenericType(factory.createIdentifier(collectionType) , arguments);
+            }
+        | LOOKAHEAD(2)
+        type = ReferenceType()
+    )
+    {
+        return type;
+    }
+}
+
+Tree SimpleType():
+{
+    Tree simpleType;
+    Token exceptionKeyword;
+}
+{
+    (
+    exceptionKeyword = <EXCEPTION_KEYWORD> { simpleType = factory.createIdentifier(exceptionKeyword); }
+    | simpleType = ClassOrInterfaceType()
+    )
+    { return simpleType; }
+}
+
+Tree ReferenceType():
+{
+    Tree type;
+    Token exceptionKeyword;
+}
+{
+    (
+        type = SimpleType()
+        [
+            LOOKAHEAD(2) <LBRACKET_SEPARATOR> <RBRACKET_SEPARATOR>
+            { type = factory.createArrayType(type); }
+        ]
+    )
+    { return type; }
+}
+
+Tree ClassOrInterfaceErasureType():
+{
+    IdentifierTree name;
+    Tree type;
+    List<Tree> genericArguments = new ArrayList<Tree>();
+}
+{
+    name  = ClassOrInterfaceType()
+    (
+        <LT_OPERATOR> type = Type()
+        {   
+            genericArguments.add(type);
+        }
+        (
+            LOOKAHEAD(2) <COMMA_SEPARATOR> type = Type()
+            {
+               genericArguments.add(type);
+            }
+        )*
+        <GT_OPERATOR>
+    )?
+    {
+        if (genericArguments.size() > 0) {
+            return factory.createGenericType(name, genericArguments);
+        } else {
+            return name;
+        }
+
+    }
+}
+
+IdentifierTree ClassOrInterfaceType():
+{
+    Token identifier;
+    List<IdentifierTree> identifiers = new ArrayList<IdentifierTree>();
+}
+{
+    ( 
+        identifier = AllowedKeywordsAsIdentifier() 
+        | identifier = SpecialKeywordsAsIdentifier() 
+    )    
+    { identifiers.add(factory.createIdentifier(identifier)); }
+    (
+        LOOKAHEAD(2)
+        <DOT_SEPARATOR> ( identifier = AllowedKeywordsAsIdentifier() | identifier = SpecialKeywordsAsIdentifier() )
+        { identifiers.add(factory.createIdentifier(identifier)); }
+    )*
+    { return factory.createIdentifier(identifiers); }
+}
+
+Tree ResultType():
+{
+    Tree resultType;
+    Token voidKeyword;
+}
+{
+    voidKeyword = <VOID_KEYWORD> { return factory.createIdentifier(voidKeyword); }
+    | resultType = Type() { return resultType; }
+}
+
+/*
+ * A lookahead of 2 is required below since "Name" can be followed
+ * by a ".*" when used in the context of an "ImportDeclaration".
+ */
+Name Name():
+{
+    ExpressionTree identifier;
+    List<ExpressionTree> identifiers = new ArrayList<ExpressionTree>();
+}
+{
+    identifier = MethodIdentifier()
+    {
+        identifiers.add(identifier);
+    }
+    (
+        LOOKAHEAD(<DOT_SEPARATOR>MethodIdentifier())
+        <DOT_SEPARATOR> identifier = MethodIdentifier()
+        {
+            identifiers.add(identifier);
+        }
+    )*
+    {
+        return factory.createName(identifiers);
+    }
+}
+
+/*
+ * Expression syntax follows.
+ */
+/*
+ * This expansion has been written this way instead of:
+ *   Assignment() | ConditionalExpression()
+ * for performance reasons.
+ * However, it is a weakening of the grammar for it allows the LHS of
+ * assignments to be any conditional expression whereas it can only be
+ * a primary expression.  Consider adding a semantic predicate to work
+ * around this.
+ */
+ExpressionTree Expression():
+{
+    ExpressionTree expression;
+    Token operator;
+    ExpressionTree assignment;
+}
+{
+    expression = ConditionalExpression()
+    [
+        LOOKAHEAD(2)
+        operator = AssignmentOperator() assignment = Expression()
+        {
+            expression = factory.createCompoundAssignment(expression, assignment, operator);
+        }
+    ]
+    {
+        return expression;
+    }
+}
+
+Token AssignmentOperator():
+{
+    Token operator;
+}
+{
+    operator = <ASSIGN_OPERATOR>                 { return operator; }
+    | operator = <STARASSIGN_OPERATOR>           { return operator; }
+    | operator = <SLASHASSIGN_OPERATOR>          { return operator; }
+    | operator = <REMASSIGN_OPERATOR>            { return operator; }
+    | operator = <PLUSASSIGN_OPERATOR>           { return operator; }
+    | operator = <MINUSASSIGN_OPERATOR>          { return operator; }
+    | operator = <LSHIFTASSIGN_OPERATOR>         { return operator; }
+    | operator = <RSIGNEDSHIFTASSIGN_OPERATOR>   { return operator; }
+    | operator = <RUNSIGNEDSHIFTASSIGN_OPERATOR> { return operator; }
+    | operator = <ANDASSIGN_OPERATOR>            { return operator; }
+    | operator = <XORASSIGN_OPERATOR>            { return operator; }
+    | operator = <ORASSIGN_OPERATOR>             { return operator; }
+}
+
+ExpressionTree ConditionalExpression():
+{
+    ExpressionTree condition;
+    ExpressionTree trueExpression;
+    ExpressionTree falseExpression;
+}
+{
+    condition = ConditionalOrExpression()
+    [
+        <HOOK_OPERATOR> trueExpression = Expression() <COLON_OPERATOR> falseExpression = Expression()
+        {
+            condition = factory.createConditional(condition, trueExpression, falseExpression);
+        }
+    ]
+    {
+        return condition;
+    }
+}
+
+ExpressionTree ConditionalOrExpression():
+{
+    ExpressionTree left;
+    ExpressionTree right;
+    Token operator;
+}
+{
+    left = ConditionalAndExpression()
+    (
+        operator = <SC_OR_OPERATOR> right = ConditionalAndExpression()
+        {
+            left = factory.createConditionalOROperation(left, right, operator);
+        }
+    )*
+    {
+        return left;
+    }
+}
+
+ExpressionTree ConditionalAndExpression():
+{
+    ExpressionTree left;
+    ExpressionTree right;
+    Token operator;
+}
+{
+    left = InclusiveOrExpression()
+    (
+        operator = <SC_AND_OPERATOR> right = InclusiveOrExpression()
+        {
+            left = factory.createConditionalAndOperation(left, right, operator);
+        }
+    )*
+    {
+        return left;
+    }
+}
+
+ExpressionTree InclusiveOrExpression():
+{
+    ExpressionTree left;
+    ExpressionTree right;
+    Token operator;
+    Tree.Kind kind;
+}
+{
+    left = ExclusiveOrExpression()
+    (
+        operator = <BIT_OR_OPERATOR> { kind = Tree.Kind.OR; }
+        right = ExclusiveOrExpression()
+        {
+            left = factory.createBinary(kind, left, right, operator);
+        }
+    )*
+    {
+        return left;
+    }
+}
+
+ExpressionTree ExclusiveOrExpression():
+{
+    ExpressionTree left;
+    ExpressionTree right;
+    Token operator;
+}
+{
+    left = AndExpression()
+    (
+        operator = <XOR_OPERATOR> right = AndExpression()
+        {
+            left = factory.createXOROperation(left, right, operator);
+        }
+    )*
+    {
+        return left;
+    }
+}
+
+ExpressionTree AndExpression():
+{
+    ExpressionTree left;
+    ExpressionTree right;
+    Token operator;
+    Tree.Kind kind;
+}
+{
+    left = EqualityExpression()
+    (
+        operator = <BIT_AND_OPERATOR> { kind = Tree.Kind.AND; }
+        right = EqualityExpression()
+        {
+            left = factory.createBinary(kind, left, right, operator);
+        }
+    )*
+    {
+        return left;
+    }
+}
+
+ExpressionTree EqualityExpression():
+{
+    ExpressionTree left;
+    ExpressionTree right;
+    Token operator;
+}
+{
+    left = InstanceOfExpression()
+    (
+        (operator = <EQ_OPERATOR> | operator = <NE_OPERATOR> )
+        right = InstanceOfExpression()
+        {
+            left = factory.createEqualOperation(left, right, operator);
+        }
+    )*
+    {
+        return left;
+    }
+}
+
+ExpressionTree InstanceOfExpression():
+{
+    ExpressionTree exp;
+    Tree type;
+}
+{
+    exp = RelationalExpression()
+    [
+        <INSTANCEOF_KEYWORD>  type = Type()
+        {
+            exp = factory.createInstanceOf(exp, type);
+        }
+    ]
+    {
+        return exp;
+    }
+}
+
+ExpressionTree RelationalExpression():
+{
+    ExpressionTree left;
+    ExpressionTree right;
+    Token operator;
+    Tree.Kind kind;
+}
+{
+    left = ShiftExpression()
+    (
+        (
+            operator = <LT_OPERATOR> { kind = Tree.Kind.LESS_THAN; }
+            | operator = <GT_OPERATOR>  { kind = Tree.Kind.GREATER_THAN; }
+            | operator = <LE_OPERATOR> { kind = Tree.Kind.LESS_THAN_EQUAL; }
+            | operator = <GE_OPERATOR> { kind = Tree.Kind.GREATER_THAN_EQUAL; }
+        )
+        right = ShiftExpression()
+        {
+            left = factory.createBinary(kind, left, right, operator);
+        }
+    )*
+    {
+        return left;
+    }
+}
+
+ExpressionTree ShiftExpression():
+{
+    ExpressionTree left;
+    ExpressionTree right;
+    Token operator;
+    Tree.Kind kind;
+}
+{
+    left = AdditiveExpression()
+    (
+        (
+            operator = <LSHIFT_OPERATOR> { kind = Tree.Kind.LEFT_SHIFT; }
+            | operator = RSIGNEDSHIFT() { kind = Tree.Kind.RIGHT_SHIFT; }
+            | operator = RUNSIGNEDSHIFT() { kind = Tree.Kind.UNSIGNED_RIGHT_SHIFT_ASSIGNMENT; }
+        )
+        right = AdditiveExpression()
+        {
+            left = factory.createBinary(kind, left, right, operator);
+        }
+    )*
+    {
+        return left;
+    }
+}
+
+ExpressionTree AdditiveExpression():
+{
+    ExpressionTree left;
+    ExpressionTree right;
+    Token operator;
+    boolean isPlus = false;
+}
+{
+    left = MultiplicativeExpression()
+    (   
+        LOOKAHEAD( <PLUS_OPERATOR> | <MINUS_OPERATOR> )
+        (  operator = <PLUS_OPERATOR> { isPlus = true; } | operator = <MINUS_OPERATOR> )
+        right = MultiplicativeExpression()
+        {
+            if (isPlus) {
+                left = factory.createPlusOperation(left, right, operator);
+            } else {
+                left = factory.createMinusOperation(left, right, operator);
+            }
+        }
+    )*
+    {
+        return left;
+    }
+}
+
+ExpressionTree MultiplicativeExpression():
+{
+    ExpressionTree left;
+    ExpressionTree right;
+    Token operator;
+    boolean isMultiplication = false;
+    boolean isDivision = false;
+}
+{
+    left = UnaryExpression()
+    (
+        (
+            operator = <STAR_OPERATOR>    { isMultiplication = true; }
+            | operator = <SLASH_OPERATOR> { isDivision = true; }
+            | operator = <REM_OPERATOR>
+        )
+        right = UnaryExpression()
+        {
+            if (isMultiplication) {
+                left = factory.createMultiplyOperation(left, right, operator);
+            } else if (isDivision) {
+                left = factory.createDivideOperation(left, right, operator);
+            } else {
+                left = factory.createRemainderOperation(left, right, operator);
+            }
+        }
+    )*
+    {
+        return left;
+    }
+}
+
+ExpressionTree UnaryExpression():
+{
+    ExpressionTree exp;
+    Token operator;
+    Tree.Kind kind;
+}
+{
+    (
+        operator = <PLUS_OPERATOR> { kind = Tree.Kind.UNARY_PLUS; }
+        | operator = <MINUS_OPERATOR> { kind = Tree.Kind.UNARY_MINUS; }
+    )
+      exp = UnaryExpression()             { return factory.createUnary(kind, exp, operator); }
+    | exp = PreIncrementExpression()      { return exp; }
+    | exp = PreDecrementExpression()      { return exp; }
+    | exp = UnaryExpressionNotPlusMinus() { return exp; }
+}
+
+ExpressionTree PreIncrementExpression():
+{
+    ExpressionTree exp;
+    Token operator;
+}
+{
+    operator = <INCR_OPERATOR> exp = PrimaryExpression()
+    {
+        return factory.createPrefixIncrement(exp, operator);
+    }
+}
+
+ExpressionTree PreDecrementExpression():
+{
+    ExpressionTree exp;
+    Token operator;
+}
+{
+    operator = <DECR_OPERATOR> exp = PrimaryExpression()
+    {
+        return factory.createPrefixDecrement(exp, operator);
+    }
+}
+
+ExpressionTree UnaryExpressionNotPlusMinus():
+{
+    ExpressionTree exp;
+    Token operator;
+}
+{
+    ( operator = <BANG_OPERATOR> ) exp = UnaryExpression()
+    {
+        return factory.createUnary(Tree.Kind.LOGICAL_COMPLEMENT, exp, operator);
+    }
+    | LOOKAHEAD( CastLookahead() )
+      exp = CastExpression()
+      {
+          return exp;
+      }
+    | exp = PrimaryExpression() 
+      [
+          LOOKAHEAD( <INCR_OPERATOR> | <DECR_OPERATOR> ) 
+          exp = PostfixExpression(exp)
+      ]
+      {
+          return exp;
+      }
+}
+
+// This production is to determine lookahead only.  The LOOKAHEAD specifications
+// below are not used, but they are there just to indicate that we know about this.
+void CastLookahead():
+{}
+{
+    LOOKAHEAD(<LPAREN_SEPARATOR> Type() <LBRACKET_SEPARATOR>)
+      <LPAREN_SEPARATOR> Type() <LBRACKET_SEPARATOR> <RBRACKET_SEPARATOR>
+    | <LPAREN_SEPARATOR> Type() <RPAREN_SEPARATOR>
+      ( <BANG_OPERATOR> | <LPAREN_SEPARATOR> | AllowedKeywordsAsIdentifier() | <THIS_KEYWORD> | <SUPER_KEYWORD> | <NEW_KEYWORD> | Literal() )
+}
+
+ExpressionTree CastExpression():
+{
+    ExpressionTree exp;
+    Tree type;
+}
+{
+    (
+        LOOKAHEAD(<LPAREN_SEPARATOR> SimpleType())
+        <LPAREN_SEPARATOR> type = Type() <RPAREN_SEPARATOR> exp = UnaryExpression()
+        | <LPAREN_SEPARATOR> type = Type() <RPAREN_SEPARATOR> exp = UnaryExpressionNotPlusMinus()
+    )
+    {
+        return factory.createTypeCast(exp, type);
+    }
+}
+
+ExpressionTree PostfixExpression(ExpressionTree exp):
+{
+    Token operator;
+}
+{
+    operator = <INCR_OPERATOR> 
+    { 
+        return factory.createPostfixIncrement(exp, operator); 
+    }
+    | operator = <DECR_OPERATOR> 
+      { 
+          return factory.createPostfixDecrement(exp, operator); 
+      }
+}
+
+ApexParser.Tuple TuplePrimaryExpression():
+{
+    ApexParser.Tuple treeObject = new ApexParser.Tuple();
+    ApexParser.Tuple prefix;
+    ApexParser.Tuple suffix;
+}
+{
+    prefix = TuplePrimaryPrefix() 
+    (
+        LOOKAHEAD(2) suffix = TuplePrimarySuffix((ExpressionTree)prefix.treeObject)
+        {
+            prefix = suffix;
+        }
+    )*
+    {
+        return prefix;
+    }
+}
+
+ApexParser.Tuple TuplePrimaryPrefix():
+{
+    ApexParser.Tuple treeObject = new ApexParser.Tuple();
+    ExpressionTree exp;
+    Name name;
+    Tree type;
+    Token identifier;
+    List<Token> identifiers = new ArrayList<Token>();
+    ExpressionTree primaryPrefix;
+    Token modifier = null;
+}
+{
+    (
+        LOOKAHEAD(2)
+        exp = Literal()
+        {
+            primaryPrefix = exp;
+        }
+        | LOOKAHEAD( ResultType() <DOT_SEPARATOR> <CLASS_KEYWORD> )
+          (type = ResultType() <DOT_SEPARATOR> identifier = <CLASS_KEYWORD>) { primaryPrefix = null; }
+        | LOOKAHEAD(Name())
+        name = Name()
+        {
+            primaryPrefix = factory.createIdentifier(name);
+        }
+
+        |(
+            //TODO: Valid the structure "Super, This and Namespace" with an Identifier in the Primary prefix
+            modifier = <SUPER_KEYWORD>
+            | modifier = <THIS_KEYWORD>
+            | SimpleType()
+         ) <DOT_SEPARATOR> name = Name()
+        {
+            primaryPrefix = factory.createIdentifier(name, modifier); 
+        }
+        | <LPAREN_SEPARATOR> exp = Expression() <RPAREN_SEPARATOR>
+          {
+              primaryPrefix = factory.createParenthesized(exp);
+          }
+        | exp = AllocationExpression()
+          {
+              primaryPrefix = exp;
+          }
+        | <LBRACKET_SEPARATOR> 
+          ( 
+            primaryPrefix = ExpressionSql() { treeObject.treeType = ApexParser.Type.ExpressionSql; } 
+            | primaryPrefix = ExpressionSosl() { treeObject.treeType = ApexParser.Type.ExpressionSosl; }
+          ) 
+          <RBRACKET_SEPARATOR>
+    )
+    {
+        treeObject.treeObject = primaryPrefix;
+        return treeObject;
+    }
+}
+
+ApexParser.Tuple TuplePrimarySuffix(ExpressionTree prefixExpression):
+{
+    ApexParser.Tuple treeObject = new ApexParser.Tuple();
+    ExpressionTree index;
+    Token identifier;
+    List<? extends ExpressionTree> arguments;
+    ExpressionTree primmarySuffix;
+}
+{
+    (
+        //array access
+        <LBRACKET_SEPARATOR> index = Expression() <RBRACKET_SEPARATOR> 
+        {
+            primmarySuffix = factory.createArrayAccess(prefixExpression, index);
+        }
+        | <DOT_SEPARATOR> identifier = AllowedKeywordsAsIdentifierForMethods() //member selector
+          {
+            primmarySuffix = factory.createMemberSelect(identifier, prefixExpression);
+          }
+        | arguments = Arguments() //method invocation
+          {
+              treeObject.treeType = ApexParser.Type.Arguments;
+              primmarySuffix = factory.createMethodInvocation(prefixExpression, arguments);
+          }
+    )
+    {
+        treeObject.treeObject = primmarySuffix;
+        return treeObject;
+    }
+}
+
+ExpressionTree PrimaryExpression():
+{
+    ExpressionTree prefix;
+    ExpressionTree suffix;
+}
+{
+    prefix = PrimaryPrefix()
+    (
+        LOOKAHEAD(2) suffix = PrimarySuffix(prefix)
+        {
+            prefix = suffix;
+        }
+    )*
+    {
+        return prefix;
+    }
+}
+
+ExpressionTree PrimaryPrefix():
+{
+    ExpressionTree exp;
+    Name name;
+    Tree type;
+    Token identifier;
+    List<Token> identifiers = new ArrayList<Token>();
+    ExpressionTree primaryPrefix;
+    Token modifier = null;
+}
+{
+    (
+        LOOKAHEAD(2)
+        exp = Literal()
+        {
+            primaryPrefix = exp;
+        }
+        | LOOKAHEAD( ResultType() <DOT_SEPARATOR> <CLASS_KEYWORD> )
+          (type = ResultType() <DOT_SEPARATOR> identifier = <CLASS_KEYWORD>) { primaryPrefix = null; } //factory.createMemberSelect(identifier, type); }
+        | LOOKAHEAD(Name())
+        name = Name()
+        {
+            primaryPrefix = factory.createIdentifier(name);
+        }
+
+        |(
+            //TODO: Valid the structure "Super, This and Namespace" with an Identifier in the Primary prefix
+            modifier = <SUPER_KEYWORD>
+            | modifier = <THIS_KEYWORD>
+            | SimpleType()
+         ) <DOT_SEPARATOR> name = Name()
+        {
+            primaryPrefix = factory.createIdentifier(name, modifier); //add TYPE
+        }
+        | <LPAREN_SEPARATOR> exp = Expression() <RPAREN_SEPARATOR>
+          {
+              primaryPrefix = factory.createParenthesized(exp);
+          }
+        | exp = AllocationExpression()
+          {
+              primaryPrefix = exp;
+          }
+        | <LBRACKET_SEPARATOR> (exp = ExpressionSql() | exp = ExpressionSosl()) <RBRACKET_SEPARATOR>
+          {
+              primaryPrefix = exp;
+          }
+
+    )
+    {
+        return primaryPrefix;
+    }
+}
+
+ExpressionTree PrimarySuffix(ExpressionTree prefixExpression):
+{
+    ExpressionTree index;
+    Token identifier;
+    List<? extends ExpressionTree> arguments;
+    ExpressionTree primmarySuffix;
+}
+{
+    (
+        <LBRACKET_SEPARATOR> index = Expression() <RBRACKET_SEPARATOR> //array access
+        {
+            primmarySuffix = factory.createArrayAccess(prefixExpression, index);
+        }
+        | <DOT_SEPARATOR> identifier = AllowedKeywordsAsIdentifierForMethods() //member selector
+          {
+            primmarySuffix = factory.createMemberSelect(identifier, prefixExpression);
+          }
+        | arguments = Arguments() //method invocation
+          {
+              primmarySuffix = factory.createMethodInvocation(prefixExpression, arguments);
+          }
+    )
+    {
+        return primmarySuffix;
+    }
+}
+
+ExpressionTree Literal():
+{
+    Token value;
+}
+{
+    value = <INTEGER_LITERAL_NUMBER>          { return factory.createIntegerLiteral(value); }
+    | value = <FLOATING_POINT_LITERAL_NUMBER> { return factory.createDoubleLiteral(value); }
+    | value = <STRING_LITERAL_STRING>         { return factory.createStringLiteral(value); }
+    | value = BooleanLiteral()         { return factory.createBooleanLiteral(value); }
+    | value = NullLiteral()            { return factory.createNullLiteral(value); }
+    | value = SpecialKeywordsAsIdentifier()   { return factory.createNullLiteral(value); }
+}
+
+Token BooleanLiteral():
+{
+    Token keyword;
+}
+{
+    keyword = <TRUE_KEYWORD>    { return keyword; }
+    | keyword = <FALSE_KEYWORD> { return keyword; }
+}
+
+Token NullLiteral():
+{
+    Token keyword;
+}
+{
+    keyword = <NULL_KEYWORD> { return keyword; }
+}
+
+List<? extends ExpressionTree> Arguments():
+{
+    List<? extends ExpressionTree> expressions = new ArrayList<ExpressionTree>();
+}
+{
+    <LPAREN_SEPARATOR> [ expressions = ArgumentList() ] <RPAREN_SEPARATOR>
+    {
+        return expressions;
+    }
+}
+
+List<? extends ExpressionTree> ArgumentList():
+{
+    ExpressionTree expression;
+    List<ExpressionTree> expressions = new ArrayList<ExpressionTree>();
+    Token thisToken;
+}
+{
+    (
+        LOOKAHEAD(2)
+        expression = Expression() { expressions.add(expression); }
+        | thisToken = <THIS_KEYWORD> { expressions.add(factory.createIdentifier(thisToken)); }
+    )
+    (
+        <COMMA_SEPARATOR>
+        (LOOKAHEAD(2) expression = Expression() { expressions.add(expression); }
+        | thisToken = <THIS_KEYWORD>{ expressions.add(factory.createIdentifier(thisToken)); } )
+    )*
+    {
+        return expressions;
+    }
+}
+
+ExpressionTree AllocationExpression():
+{
+    ExpressionTree type;
+    ExpressionTree allocationExpression;
+    List<? extends ExpressionTree> arguments;
+    Tree primitiveType;
+    Token collectionType;
+    List<? extends Tree> typeArguments;
+    Token blockStart = null;
+    Token blockEnd = null;
+}
+{
+    (
+     <NEW_KEYWORD>
+      (LOOKAHEAD(2) type = ClassOrInterfaceType()
+        (
+          allocationExpression = ArrayDimsAndInits(type) //new Reference[10]
+          | arguments = Arguments()
+            [
+                LOOKAHEAD(2)
+                blockStart= <LBRACE_SEPARATOR>
+                blockEnd = <RBRACE_SEPARATOR>
+            ] //new Reference(exp1, exp2){}
+            { allocationExpression = factory.createNewClass(type, blockStart, blockEnd, arguments); }
+        )
+        |
+        (
+            (collectionType = <LIST_KEYWORD> | collectionType = <SET_KEYWORD> | collectionType = <ITERATOR_KEYWORD>) typeArguments = GenericType()
+                (
+                    arguments = Arguments()
+                    | (
+                        blockStart= <LBRACE_SEPARATOR>
+                        arguments = SimpleInitialCollectionValues()
+                        blockEnd = <RBRACE_SEPARATOR>
+                    )
+                )
+            | collectionType = <MAP_KEYWORD> typeArguments = GenericType()
+                (
+                    arguments = Arguments()
+                    | (
+                        blockStart= <LBRACE_SEPARATOR>
+                        arguments = MapInitialCollectionValues()
+                        blockEnd = <RBRACE_SEPARATOR>
+                    )
+                )
+        )
+        {
+            allocationExpression = factory.createNewCollection(collectionType, blockStart, blockEnd, typeArguments, arguments);
+        }
+      )
+    )
+    {
+        return allocationExpression;
+    }
+}
+
+ExpressionTree ExpressionSosl():
+{
+    SOSLFindExpressionTree findSOSLExpression;
+    Token findQuery = null;
+    LiteralTree findQueryExpression = null;
+    ExpressionTree optionalExpression = null;
+    List<ExpressionTree> optionalStatements = new ArrayList<ExpressionTree>();
+}
+{
+    (
+        <FIND_KEYWORD>findQuery = <STRING_LITERAL_STRING>
+        {
+             findQueryExpression = factory.createStringLiteral(findQuery);
+             findSOSLExpression = factory.createSOSLFindExpression(findQueryExpression);
+        }
+        (optionalExpression = SoslInSearchGroupSpec())?
+        {
+            optionalStatements.add(optionalExpression);
+        }
+        (optionalExpression = SoslReturningFieldSpec())?
+        {
+            optionalStatements.add(optionalExpression);
+        }
+        (optionalExpression = SoslUpdateSpec())?
+        {
+            optionalStatements.add(optionalExpression);
+        }
+        (LOOKAHEAD(2) optionalExpression = SoslWithDivisionFilter())?
+        {
+            optionalStatements.add(optionalExpression);
+        }
+        (LOOKAHEAD(2) optionalExpression = SoslWithDataCategory())?
+        {
+            optionalStatements.add(optionalExpression);
+        }
+        (LOOKAHEAD(2) optionalExpression = SoslWithNetworkSpec())?
+        {
+            optionalStatements.add(optionalExpression);
+        }
+        (LOOKAHEAD(2) optionalExpression = SoslWithSnippetSpec())?
+        {
+            optionalStatements.add(optionalExpression);
+        }
+        (optionalExpression = SoqlLimitExpression())?
+        {
+            optionalStatements.add(optionalExpression);
+        }
+    )
+    {
+        return factory.createSOSLExpression(findSOSLExpression,optionalStatements);
+    }
+
+}
+
+SOSLInExpressionTree SoslInSearchGroupSpec():
+{
+    SOSLSearchGroupType searchGroup;
+}
+{
+        <IN_KEYWORD> searchGroup = SoslSearchGroup()
+        {
+            return factory.createSOSLInExpression(searchGroup);
+        }
+}
+
+SOSLSearchGroupType SoslSearchGroup():
+{}
+{
+    <ALL_FIELDS_KEYWORD>
+    {
+        return SOSLSearchGroupType.ALL_FIELDS;
+    }
+    | <EMAIL_FIELDS_KEYWORD>
+    {
+        return SOSLSearchGroupType.EMAIL_FIELDS;
+    }
+    | <NAME_FIELDS_KEYWORD>
+    {
+        return SOSLSearchGroupType.NAME_FIELDS;
+    }
+    | <PHONE_FIELDS_KEYWORD>
+    {
+        return SOSLSearchGroupType.PHONE_FIELDS;
+    }
+    | <SIDEBAR_FIELDS_KEYWORD>
+    {
+        return SOSLSearchGroupType.SIDEBAR_FIELDS;
+    }
+}
+
+SOSLReturningExpressionTree SoslReturningFieldSpec():
+{
+    List<SOSLObjectFieldExpressionTree> objectFieldList;
+}
+{
+    <RETURNING_KEYWORD> objectFieldList = SoslReturningObjectTypeSpec()
+    {
+        return factory.createSOSLReturningExpression(objectFieldList);
+    }
+}
+
+List<SOSLObjectFieldExpressionTree> SoslReturningObjectTypeSpec():
+{
+    SOSLObjectFieldExpressionTree objectField;
+    List<SOSLObjectFieldExpressionTree> objectFieldList = new ArrayList<SOSLObjectFieldExpressionTree>();
+}
+{
+    (
+        objectField = SoslReturningObjectType()
+        {
+            objectFieldList.add(objectField);
+        }
+        (
+            LOOKAHEAD(2) <COMMA_SEPARATOR> objectField = SoslReturningObjectType()
+            {
+                objectFieldList.add(objectField);
+            }
+        )*
+    )
+    {
+        return objectFieldList;
+    }
+}
+
+SOSLObjectFieldExpressionTree SoslReturningObjectType():
+{
+    Name objectTypeName;
+    List<IdentifierTree> fieldList = new ArrayList<IdentifierTree>();
+    List<ExpressionTree> optionalStatements = new ArrayList<ExpressionTree>();
+}
+{
+    (objectTypeName = Name()(SoslObjectTypeFieldList(fieldList, optionalStatements))?)
+    {
+       return factory.createSOSLObjectFieldExpression(factory.createIdentifier(objectTypeName), fieldList, optionalStatements);
+    }
+}
+
+void SoslObjectTypeFieldList(List<IdentifierTree> identifiers, List<ExpressionTree> optionalStatements):
+{}
+{
+    <LPAREN_SEPARATOR>((SoslObjectTypeField(identifiers, optionalStatements))+)<RPAREN_SEPARATOR>
+}
+
+void SoslObjectTypeField(List<IdentifierTree> identifiers, List<ExpressionTree> optionalStatements):
+{
+    Name name;
+    ExpressionTree optionalExpression = null;
+}
+{
+    name  = SoslObjectTypeFieldName()
+    {
+        identifiers.add(factory.createIdentifier(name));
+    }
+    (
+        LOOKAHEAD(2) <COMMA_SEPARATOR> name = SoslObjectTypeFieldName()
+        {
+            identifiers.add(factory.createIdentifier(name));
+        }
+    )*
+    (
+        optionalExpression = ExpressionWhere()
+        {
+            optionalStatements.add(optionalExpression);
+        }
+    )?
+    (
+        <ORDER_KEYWORD> <BY_KEYWORD> optionalExpression = SoqlOrderByExpression()
+        {
+            optionalStatements.add(optionalExpression);
+        }
+    )?
+    (
+        LOOKAHEAD(2) optionalExpression = SoqlLimitExpression()
+        {
+            optionalStatements.add(optionalExpression);
+        }
+    )?
+    (
+        LOOKAHEAD(2)
+        optionalExpression = SoqlOffsetExpression()
+        {
+            optionalStatements.add(optionalExpression);
+        }
+    )?
+}
+
+Name SoslObjectTypeFieldName():
+{
+    Name name;
+}
+{
+    (
+        LOOKAHEAD(2)
+        <TOLABEL_KEYWORD><LPAREN_SEPARATOR>name = Name()<RPAREN_SEPARATOR>
+        | name = Name()
+    )
+    {
+        return name;
+    }
+}
+
+SOSLUpdateExpressionTree SoslUpdateSpec():
+{
+    SOSLUpdateType UpdateType;
+}
+{
+    <UPDATE_KEYWORD>
+    (
+        <TRACKING_KEYWORD>
+        {
+            UpdateType = SOSLUpdateType.TRACKING;
+        }
+        |<VIEWSTAT_KEYWORD>
+        {
+             UpdateType = SOSLUpdateType.VIEWSTAT;
+        }
+    )
+    {
+        return factory.createSOSLUpdateExpression(UpdateType);
+    }
+}
+
+SOSLWithDivisionFilterExpressionTree SoslWithDivisionFilter():
+{
+    Token FindFilter;
+}
+{
+    <WITH_KEYWORD><DIVISION_KEYWORD><ASSIGN_OPERATOR>
+    FindFilter = <STRING_LITERAL_STRING>
+    {
+        return factory.createSOSLWithDivisionFilterExpression(factory.createStringLiteral(FindFilter));
+    }
+}
+
+SOSLWithDataCategoryExpressionTree SoslWithDataCategory():
+{
+    ExpressionTree left;
+    ExpressionTree right;
+    Token logicalOperator;
+}
+{
+    (
+        <WITH_KEYWORD><DATA_KEYWORD><CATEGORY_KEYWORD>
+        left = SoslDataCategorySpec()
+    )
+    (
+        LOOKAHEAD(2)
+        (
+            logicalOperator = <ANDLITERAL_KEYWORD>
+            | logicalOperator = <OR_KEYWORD>
+        )
+        right = SoslDataCategorySpec()
+        {
+            left = factory.createBinary(null, left, right, logicalOperator);
+        }
+    )*
+    {
+        return factory.createSOSLWithDataCategoryExpression(left);
+    }
+
+}
+
+SOSLDataCategoryExpressionTree SoslDataCategorySpec():
+{
+    Name groupName;
+    SOSLDataCategoryOperator operator;
+    Name category;
+}
+{
+    groupName = Name()
+    (
+        <AT_KEYWORD>
+        {
+            operator = SOSLDataCategoryOperator.AT;
+        }
+        | <ABOVE_OR_BELOW_KEYWORD>
+        {
+            operator = SOSLDataCategoryOperator.ABOVE_OR_BELOW;
+        }
+        | <ABOVE_KEYWORD>
+        {
+            operator = SOSLDataCategoryOperator.ABOVE;
+        }
+        | <BELOW_KEYWORD>
+        {
+            operator = SOSLDataCategoryOperator.BELOW;
+        }
+    )
+    category = Name()
+    {
+        return factory.createSOSLDataCategoryExpression(factory.createIdentifier(groupName), operator, factory.createIdentifier(category));
+    }
+}
+
+SOSLWithNetworkExpressionTree SoslWithNetworkSpec():
+{
+    List<LiteralTree> networkList = new ArrayList<LiteralTree>();
+    Token network;
+}
+{
+    <WITH_KEYWORD><NETWORK_KEYWORD>
+    (
+        (
+            <IN_KEYWORD> <LPAREN_SEPARATOR> network = <STRING_LITERAL_STRING>
+            {
+                networkList.add(factory.createStringLiteral(network));
+            }
+            (
+                LOOKAHEAD(2)
+                <COMMA_SEPARATOR>
+                network= <STRING_LITERAL_STRING>
+                {
+                    networkList.add(factory.createStringLiteral(network));
+                }
+            )*
+            <RPAREN_SEPARATOR>
+        )
+        | (
+            <ASSIGN_OPERATOR>network = <STRING_LITERAL_STRING>
+            {
+                networkList.add(factory.createStringLiteral(network));
+            }
+        )
+    )
+    {
+        return factory.createSOSLWithNetworkExpression(networkList);
+    }
+}
+
+SOSLWithSnippetExpressionTree SoslWithSnippetSpec():
+{
+    Token value = null;
+}
+{
+    <WITH_KEYWORD><SNIPPET_KEYWORD>
+    (
+        <LPAREN_SEPARATOR><TARGET_LENGTH_KEYWORD>
+        <ASSIGN_OPERATOR> value = <INTEGER_LITERAL_NUMBER>
+        <RPAREN_SEPARATOR>
+    )?
+    {
+        return factory.createSOSLWithSnippetExpression(factory.createIntegerLiteral(value));
+    }
+}
+
+/*
+ * The third LOOKAHEAD specification below is to parse to PrimarySuffix
+ * if there is an expression between the "[...]".
+ */
+NewArrayTree ArrayDimsAndInits(ExpressionTree type):
+{
+    ExpressionTree dimention;
+    List<? extends ExpressionTree> initializers;
+    NewArrayTree newArray;
+    Token blockStart = null;
+    Token blockEnd = null;
+}
+{
+    (
+    LOOKAHEAD(2)
+    (
+        <LBRACKET_SEPARATOR> dimention = Expression() <RBRACKET_SEPARATOR>
+        {
+            newArray = factory.createNewArray(blockStart, blockEnd, type, dimention);
+        }
+    )
+    | LOOKAHEAD(2)
+      ( <LBRACKET_SEPARATOR> <RBRACKET_SEPARATOR> )
+        blockStart = <LBRACE_SEPARATOR>
+        initializers = ArrayInitializer()
+        blockEnd = <RBRACE_SEPARATOR>
+      {
+          newArray = factory.createNewArray(blockStart, blockEnd, type, initializers);
+      }
+    )
+    {
+        return newArray;
+    }
+}
+
+List<Tree> GenericType():
+{
+    List<Tree> typeArguments = new ArrayList<Tree>();
+    Tree type;
+}
+{
+    ( <LT_OPERATOR> type = Type() { typeArguments.add(type); } [ <COMMA_SEPARATOR> type = Type() { typeArguments.add(type); } ] <GT_OPERATOR> )
+    {
+        return typeArguments;
+    }
+}
+
+List<? extends ExpressionTree> SimpleInitialCollectionValues():
+{
+    List<? extends ExpressionTree> arguments = new ArrayList<ExpressionTree>();
+}
+{
+    [ arguments = ArgumentList() ]
+    {
+        return arguments;
+    }
+}
+
+List<? extends ExpressionTree> MapInitialCollectionValues():
+{
+    List<? extends ExpressionTree> arguments = new ArrayList<ExpressionTree>();
+}
+{
+    [ arguments = MapValues() ]
+    {
+        return arguments;
+    }
+}
+
+List<PairExpressionTree> MapValues():
+{
+    List<PairExpressionTree> arguments = new ArrayList<PairExpressionTree>();
+    ExpressionTree key;
+    ExpressionTree value;
+}
+{
+    (
+    ( key = Expression() <MAP_OPERATOR> value = Expression() ) { arguments.add(factory.createPair(key, value)); }
+    ( <COMMA_SEPARATOR> ( key = Expression() <MAP_OPERATOR> value = Expression() ) { arguments.add(factory.createPair(key, value)); } )*
+    )
+    {
+        return arguments;
+    }
+}
+
+/*
+ * Statement syntax follows.
+ */
+StatementTree Statement():
+{
+    StatementTree statement;
+}
+{
+    try {
+        LOOKAHEAD(2)
+        statement = Block()
+        | statement = DMLOperations() <SEMICOLON_SEPARATOR>
+        | statement = EmptyStatement()
+        | statement = CompoundStatementExpression()
+        | statement = IfStatement()
+        | statement = WhileStatement()
+        | statement = DoStatement()
+        | statement = ForStatement()
+        | statement = BreakStatement()
+        | statement = ContinueStatement()
+        | statement = ReturnStatement()
+        | statement = ThrowStatement()
+        | statement = TryStatement()
+    } catch (ParseException ex) {
+        ContextParseException contextException = new IllegalStatementException(ex);
+        contextErrorRecover(contextException);
+        statement = factory.createEmptyStatement();
+    }
+    {
+        return statement;
+    }
+}
+
+StatementTree CompoundStatementExpression():
+{
+    StatementTree statement = null;
+    StatementTree result = null;
+    List<StatementTree> childrenStatements = new ArrayList<StatementTree>();
+}
+{
+    statement = StatementExpression() { result = statement; }
+    (
+        statement = Block() { childrenStatements.add(statement); result = factory.createCompoundStatementExpression(result,childrenStatements); }
+        | <SEMICOLON_SEPARATOR>
+    )
+    {
+        return result;
+    }
+}
+
+StatementTree DMLOperations():
+{
+    StatementTree statement;
+}
+{
+    try {
+          statement = DMLOperation()
+        | statement = DMLUpsert()
+        | statement = DMLMerge()
+    } catch (ParseException ex) {
+        ContextParseException contextException = new IllegalStatementException(ex);
+        contextErrorRecover(contextException);
+        statement = factory.createEmptyStatement();
+    }
+    {
+        return statement;
+    }
+}
+
+StatementTree DMLOperation():
+{
+    ExpressionTree expression = null;
+    Token operator = null;
+    DMLOperationEnum dmlOperationEnum = null;
+}
+{
+    try {
+        (
+              operator = <INSERT_KEYWORD> {dmlOperationEnum = DMLOperationEnum.insert; }
+            | operator = <DELETE_KEYWORD> {dmlOperationEnum = DMLOperationEnum.delete; }
+            | operator = <UNDELETE_KEYWORD> {dmlOperationEnum = DMLOperationEnum.undelete; }
+            | operator = <UPDATE_KEYWORD> {dmlOperationEnum = DMLOperationEnum.update; }
+        )
+        (
+            expression = PrimaryExpression()
+        )
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalStatementException(ex));
+    }
+    {
+        return factory.createDMLOperation(dmlOperationEnum.setExpression(expression));
+    }
+}
+
+StatementTree DMLUpsert():
+{
+    ExpressionTree upsertExpression = null;
+    ExpressionTree optionalField = null;
+    DMLOperationEnum dmlOperationEnum = DMLOperationEnum.upsert;
+}
+{
+    try {
+        <UPSERT_KEYWORD>
+        (
+            upsertExpression = PrimaryExpression() { dmlOperationEnum.setExpression(upsertExpression); }
+        )
+        (
+            optionalField = PrimaryExpression()
+        )?
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalStatementException(ex));
+    }
+    {
+        return factory.createDMLUpsert(dmlOperationEnum, optionalField);
+    }
+}
+
+StatementTree DMLMerge():
+{
+    ExpressionTree masterRecords = null;
+    ExpressionTree mergeRecords = null;
+    DMLOperationEnum dmlOperationEnum = DMLOperationEnum.merge;
+}
+{
+    try {
+        <MERGE_KEYWORD>
+        (
+            masterRecords = PrimaryExpression() { dmlOperationEnum.setExpression(masterRecords); }
+            mergeRecords = PrimaryExpression()
+        )
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalStatementException(ex));
+    }
+    {
+        return factory.createDMLMerge(dmlOperationEnum, mergeRecords);
+    }
+}
+
+BlockTree Block():
+{
+    Collection<StatementTree> statements = Collections.emptyList();
+    List<StatementTree> blockStatements = new ArrayList<StatementTree>();
+    Token blockStart;
+    Token blockEnd;
+}
+{
+    blockStart = <LBRACE_SEPARATOR>
+    (
+        statements = BlockStatement()
+        {
+            blockStatements.addAll(statements);
+        }
+    )* blockEnd = <RBRACE_SEPARATOR>
+    {
+        return factory.createBlock(blockStatements, false, blockStart, blockEnd);
+    }
+}
+
+Collection<StatementTree> BlockStatement():
+{
+    StatementTree statement;
+    List<VariableTree> variableStatements;
+}
+{
+    LOOKAHEAD([<FINAL_KEYWORD>] Type() (AllowedKeywordsAsIdentifier() | SpecialKeywordsAsIdentifier()))
+    variableStatements = LocalVariableDeclaration() <SEMICOLON_SEPARATOR>
+    {
+        return new ArrayList<StatementTree>(variableStatements);
+    }
+    | LOOKAHEAD(1)
+    statement = Statement()
+      {
+          return Collections.singletonList(statement);
+      }
+  /*  | statement = ClassOrInterfaceDeclaration(factory.createModifier(new LinkedHashMap<Integer, Token>()))
+      {
+          return Collections.singletonList(statement);
+      }*/
+}
+
+List<VariableTree> LocalVariableDeclaration():
+{
+    VariableTree variable;
+    Tree type;
+    List<VariableTree> variables = new ArrayList<VariableTree>();
+    LinkedHashMap<Integer, Token> modifiers = new LinkedHashMap<Integer, Token>();
+    Token modifierToken;
+}
+{
+    try {
+        [ modifierToken = <FINAL_KEYWORD> { modifiers.put(ModifierSet.FINAL, modifierToken); } ]
+        type = Type() variable = VariableDeclarator(factory.createModifier(modifiers), type)
+        {
+            variables.add(variable);
+        }
+        (
+            <COMMA_SEPARATOR> variable = VariableDeclarator(factory.createModifier(modifiers), type)
+            {
+                variables.add(variable);
+            }
+        )*
+    } catch (ParseException ex) {
+        contextErrorRecover(new BadAssignmentException(ex));
+    }
+    {
+        return variables;
+    }
+}
+
+StatementTree EmptyStatement():
+{}
+{
+    <SEMICOLON_SEPARATOR>
+    {
+        return factory.createEmptyStatement();
+    }
+}
+
+/*
+ * The last expansion of this production accepts more than the legal
+ * Java expansions for StatementExpression.  This expansion does not
+ * use PostfixExpression for performance reasons.
+ */
+ExpressionStatementTree StatementExpression():
+{
+    ApexParser.Tuple primaryExpression = new ApexParser.Tuple();
+    ExpressionTree expression;
+    Token operator;
+    ExpressionTree assignment;
+    Token thisToken;
+}
+{
+    try {
+        expression = PreIncrementExpression()
+        | expression = PreDecrementExpression()
+        | primaryExpression = TuplePrimaryExpression() 
+            { 
+                expression = (ExpressionTree)primaryExpression.treeObject;
+                if (primaryExpression.treeType == ApexParser.Type.ExpressionSql
+                    || primaryExpression.treeType == ApexParser.Type.ExpressionSosl
+                    || primaryExpression.treeType == ApexParser.Type.Arguments
+                    || primaryExpression.treeObject instanceof NewClassTree) {
+                    return factory.createExpressionStatement(expression);
+                }
+            }
+        (
+            operator = <INCR_OPERATOR>
+            {
+                expression = factory.createPostfixIncrement(expression, operator);
+            }
+            | operator = <DECR_OPERATOR>
+              {
+                  expression = factory.createPostfixDecrement(expression, operator);
+              }
+            | operator = AssignmentOperator()
+              (
+                  LOOKAHEAD(2) assignment = Expression()
+                  {
+                      expression = factory.createCompoundAssignment(expression, assignment, operator);
+                  }
+                  | thisToken = <THIS_KEYWORD>
+                  {
+                      expression = factory.createCompoundAssignment(expression, factory.createIdentifier(thisToken), operator);
+                  }
+              )
+        )+
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalStatementException(ex));
+        expression = factory.createErroneousExpression();
+    }
+    {
+        return factory.createExpressionStatement(expression);
+    }
+}
+
+/*
+ * The disambiguating algorithm of JavaCC automatically binds dangling
+ * else's to the innermost if statement.  The LOOKAHEAD specification
+ * is to tell JavaCC that we know what we are doing.
+ */
+StatementTree IfStatement():
+{
+    ExpressionTree condition;
+    StatementTree thenStatement = factory.createEmptyStatement();
+    StatementTree elseStatement = factory.createEmptyStatement();
+}
+{
+    try {
+        <IF_KEYWORD> <LPAREN_SEPARATOR> condition = Expression() <RPAREN_SEPARATOR> thenStatement = Statement()
+        [
+            LOOKAHEAD(1)
+            <ELSE_KEYWORD> elseStatement = Statement()
+        ]
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalIfStatementException(ex));
+        condition = factory.createErroneousExpression();
+    }
+    {
+        return factory.createIf(condition, thenStatement, elseStatement);
+    }
+}
+
+StatementTree WhileStatement():
+{
+    ExpressionTree condition;
+    StatementTree statement = factory.createEmptyStatement();
+}
+{
+    try {
+        <WHILE_KEYWORD> <LPAREN_SEPARATOR> condition = Expression() <RPAREN_SEPARATOR> statement = Statement()
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalWhileStatementException(ex));
+        condition = factory.createErroneousExpression();
+    }
+    {
+        return factory.createWhileLoop(condition, statement);
+    }
+}
+
+StatementTree DoStatement():
+{
+    ExpressionTree condition;
+    StatementTree statement = factory.createEmptyStatement();
+    Token startToken = null;
+    Token endToken = null;
+}
+{
+    try {
+        startToken = <DO_KEYWORD>
+        statement = Statement()
+        <WHILE_KEYWORD> <LPAREN_SEPARATOR> condition = Expression() <RPAREN_SEPARATOR>
+        endToken = <SEMICOLON_SEPARATOR>
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalDoWhileStatementException(ex));
+        condition = factory.createErroneousExpression();
+    }
+    {
+        return factory.createDoWhileLoop(condition, statement, startToken, endToken);
+    }
+}
+
+StatementTree ForStatement():
+{
+    StatementTree forStatement = factory.createEmptyStatement();
+}
+{
+    try {
+        <FOR_KEYWORD>
+        ( 
+          LOOKAHEAD(<LPAREN_SEPARATOR> Type() (AllowedKeywordsAsIdentifier() | identifier = SpecialKeywordsAsIdentifier()) <COLON_OPERATOR>)
+          forStatement = ForEachLoop()
+          | forStatement = ForLoop()
+        )
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalForStatementException(ex));
+    }
+    {
+        return forStatement;
+    }
+}
+
+StatementTree ForEachLoop():
+{
+    Tree type;
+    Token identifier;
+    ExpressionTree expression;
+    StatementTree statements;
+}
+{
+    (
+        <LPAREN_SEPARATOR>
+        type = Type() identifier = AllowedKeywordsAsIdentifier() <COLON_OPERATOR> expression = Expression()
+        <RPAREN_SEPARATOR>
+        statements = Statement()
+    )
+    {
+        VariableTree variable = factory.createVariable(type, identifier, null);
+        return factory.createEnhancedForLoop(variable, expression, statements);
+    }
+}
+
+StatementTree ForLoop():
+{
+    List<VariableTree> initializer = new ArrayList<VariableTree>();
+    ExpressionTree condition = factory.createErroneousExpression();
+    List<ExpressionStatementTree> update = new ArrayList<ExpressionStatementTree>();
+    StatementTree statement;
+}
+{
+    (
+        <LPAREN_SEPARATOR>
+        [ initializer = ForInit() ] <SEMICOLON_SEPARATOR>
+        [ condition = Expression() ] <SEMICOLON_SEPARATOR>
+        [ update = ForUpdate() ]
+        <RPAREN_SEPARATOR>
+        statement = Statement()
+    )
+    {
+        return factory.createForLoop(initializer, condition, update, statement);
+    }
+}
+
+List<VariableTree> ForInit():
+{
+    LinkedHashMap<Integer, Token> modifiers = new LinkedHashMap<Integer, Token>();
+    List<VariableTree> variables = new ArrayList<VariableTree>();
+    VariableTree variable;
+}
+{
+    try {
+        LOOKAHEAD(Type() (AllowedKeywordsAsIdentifier() | identifier = SpecialKeywordsAsIdentifier()))
+        variables = LocalVariableDeclaration()
+        | LOOKAHEAD((AllowedKeywordsAsIdentifier() | identifier = SpecialKeywordsAsIdentifier()) <ASSIGN_OPERATOR>)
+          variable = VariableDeclarator(factory.createModifier(modifiers, null), null)
+          {
+              variables.add(variable);
+          }
+          (<COMMA_SEPARATOR> variable = VariableDeclarator(factory.createModifier(modifiers), null)
+          {
+              variables.add(variable);
+          })*
+    } catch (ParseException ex) {
+        contextErrorRecover(new BadAssignmentException(ex));
+    }
+    {
+        return variables;
+    }
+}
+
+List<ExpressionStatementTree> ForUpdate():
+{
+    ExpressionStatementTree statement;
+}
+{
+    statement = StatementExpression()
+    {
+        return Collections.singletonList(statement);
+    }
+}
+
+StatementTree BreakStatement():
+{}
+{
+    ( <BREAK_KEYWORD> <SEMICOLON_SEPARATOR> )
+    {
+        return factory.createBreak();
+    }
+}
+
+StatementTree ContinueStatement():
+{}
+{
+    ( <CONTINUE_KEYWORD> <SEMICOLON_SEPARATOR> )
+    {
+        return factory.createContinue();
+    }
+}
+
+StatementTree ReturnStatement():
+{
+    ExpressionTree expression = factory.createErroneousExpression();
+    Token thisKeyword;
+}
+{
+    try {
+        <RETURN_KEYWORD>
+        [
+            LOOKAHEAD(2)
+            expression = Expression()
+            | thisKeyword = <THIS_KEYWORD> { expression = factory.createIdentifier(thisKeyword); }
+        ] <SEMICOLON_SEPARATOR>
+
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalStatementException(ex));
+    }
+    {
+        return factory.createReturn(expression);
+    }
+}
+
+StatementTree ThrowStatement():
+{
+    ExpressionTree expression;
+}
+{
+    try {
+        <THROW_KEYWORD> expression = Expression() <SEMICOLON_SEPARATOR>
+
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalStatementException(ex));
+        expression = factory.createErroneousExpression();
+    }
+    {
+        return factory.createThrow(expression);
+    }
+}
+
+/*
+ * Semantic check required here to make sure that at least one
+ * finally/catch is present.
+ */
+TryTree TryStatement():
+{
+    BlockTree tryBlock = factory.createEmptyBlock();
+    BlockTree finallyBlock = null;
+    VariableTree parameter;
+    BlockTree catchBlock;
+    CatchTree catchTree;
+    List<CatchTree> catches = new ArrayList<CatchTree>();
+}
+{
+    try {
+        <TRY_KEYWORD> tryBlock = Block()
+        (
+            ( <CATCH_KEYWORD> <LPAREN_SEPARATOR>
+              parameter = FormalParameter() <RPAREN_SEPARATOR> catchBlock = Block() )
+            {
+                catchTree = factory.createCatch(parameter, catchBlock);
+                catches.add(catchTree);
+            }
+        )+
+        [ <FINALLY_KEYWORD> finallyBlock = Block() ]
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalTryCatchStatementException(ex));
+    }
+    {
+        return factory.createTry(tryBlock, catches, finallyBlock);
+    }
+}
+
+/* We use productions to match >>>, >> and > so that we can keep the
+ * type declaration syntax with generics clean
+ */
+Token RUNSIGNEDSHIFT():
+{}
+{
+    (
+        LOOKAHEAD({ getToken(1).kind == GT_OPERATOR &&
+                  (getToken(1)).realKind == RUNSIGNEDSHIFT_OPERATOR} )
+        ">" ">" ">"
+    )
+    { return getToken(0); }
+}
+
+Token RSIGNEDSHIFT():
+{}
+{
+    (
+        LOOKAHEAD({ getToken(1).kind == GT_OPERATOR &&
+                  (getToken(1)).realKind == RSIGNEDSHIFT_OPERATOR} )
+        ">" ">"
+    )
+    { return getToken(0); }
+}
+
+AnnotationTree Annotation():
+{
+    Name annotationType;
+    List<ExpressionTree> arguments = new ArrayList<ExpressionTree>();
+    ExpressionTree argument;
+    Token symbol;
+}
+{
+    symbol = <AT_SEPARATOR> annotationType = Name()
+    [ 
+        <LPAREN_SEPARATOR> 
+        ( 
+            argument = Expression() 
+            { 
+                arguments.add(argument); 
+            } 
+        )* 
+        <RPAREN_SEPARATOR> 
+    ]
+    {
+        return factory.createAnnotation(symbol, annotationType, arguments);
+    }
+}
+
+/*
+ * Trigger structure syntax follows.
+ */
+CompilationUnitTree TriggerCompilationUnit():
+{
+    Tree triggerDecl = null;
+}
+{
+    try {
+        ( triggerDecl = TriggerDeclaration() )
+        ( <END_OF_FILE_WHITESPACE> )?
+        ( <STUFF_TO_IGNORE> )?
+        <EOF>
+    } catch (ParseException ex) {
+        recover(ex, SEMICOLON_SEPARATOR);
+        triggerDecl = factory.createEmptyTrigger();
+    }
+    {
+        return factory.createTriggerCompilationUnit(triggerDecl);
+    }
+}
+
+Tree TriggerDeclaration():
+{
+    List<TriggerParameterTree> parameters = null;
+    Token name = null;
+    Token object = null;
+    List<? extends Tree> body = null;
+}
+{
+        <TRIGGER_KEYWORD> name = AllowedKeywordsAsIdentifier()
+        <ON_KEYWORD> object = AllowedKeywordsAsIdentifier()
+        parameters = TriggerParameters()
+        body = TriggerBody()
+    {
+        return factory.createTriggerDeclaration(name, object, parameters, body);
+    }
+}
+
+List<TriggerParameterTree> TriggerParameters():
+{
+    List<TriggerParameterTree> parameters =  new ArrayList<TriggerParameterTree>();
+}
+{
+    try{
+        <LPAREN_SEPARATOR>
+        FormalTriggerParameter(parameters) ( <COMMA_SEPARATOR> FormalTriggerParameter(parameters) )*
+        <RPAREN_SEPARATOR>
+    }catch (ParseException ex) {
+        contextErrorRecover(new TriggerTypeException(ex));
+    }
+    {
+        return parameters;
+    }
+}
+
+void FormalTriggerParameter(List<TriggerParameterTree> parameters):
+{
+   TriggerType type;
+   TriggerOperation operation;
+}
+{
+    type = TriggerType()
+    operation = TriggerOperation()
+    {
+        parameters.add(factory.createTriggerParameterTree(type,operation));
+    }
+}
+
+TriggerType TriggerType():
+{}
+{
+    <BEFORE_KEYWORD> {return TriggerType.BEFORE;}
+    |<AFTER_KEYWORD> {return TriggerType.AFTER;}
+}
+
+TriggerOperation TriggerOperation():
+{}
+{
+    <INSERT_KEYWORD> {return TriggerOperation.INSERT;}
+    |<UPDATE_KEYWORD> {return TriggerOperation.UPDATE;}
+    |<DELETE_KEYWORD> {return TriggerOperation.DELETE;}
+    |<UNDELETE_KEYWORD> {return TriggerOperation.UNDELETE;}
+}
+
+List<? extends Tree> TriggerBody():
+{
+    List<? extends Tree> member;
+}
+{
+        member = TriggerBlock()
+        {
+            return member;
+        }
+}
+
+List<? extends Tree> TriggerBlock():
+{
+    List<? extends Tree> member;
+    List<Tree> members = new ArrayList<Tree>();
+}
+{
+    <LBRACE_SEPARATOR>
+    (
+        member = TriggerBlockStatement()
+        {
+            members.addAll(member);
+        }
+    )*
+    <RBRACE_SEPARATOR>
+    {
+        return members;
+    }
+}
+
+List<? extends Tree> TriggerBlockStatement():
+{
+    ModifiersTree modifiers;
+    Tree member;
+    List<? extends Tree> TriggerMember;
+    List<VariableTree> variables;
+}
+{
+    LOOKAHEAD( Type() AllowedKeywordsAsIdentifier() )
+    variables = LocalVariableDeclaration() <SEMICOLON_SEPARATOR>
+    {
+        return variables;
+    }
+    | LOOKAHEAD(3)
+    TriggerMember = TriggerStatement()
+    {
+        return TriggerMember;
+    }
+    | modifiers = Modifiers()
+    (
+        LOOKAHEAD(2)
+        member = ClassOrInterfaceDeclaration(modifiers)
+        {
+            return Collections.singletonList(member);
+        }
+        | member = MethodDeclaration(modifiers)
+        {
+            return Collections.singletonList(member);
+        }
+    )
+}
+
+List<? extends Tree> TriggerInnerBlock():
+{
+    List<Tree> members = new ArrayList<Tree>();
+    List<? extends Tree> member;
+}
+{
+    <LBRACE_SEPARATOR>
+    (
+        member = TriggerInnerBlockStatement()
+        {
+            members.addAll(member);
+        }
+    )*
+    <RBRACE_SEPARATOR>
+    {
+        return members;
+    }
+}
+
+List<? extends Tree> TriggerInnerBlockStatement():
+{
+    List<VariableTree> member;
+    List<? extends Tree> triggerMember;
+}
+{
+    LOOKAHEAD( Type() AllowedKeywordsAsIdentifier() )
+    member = LocalVariableDeclaration() <SEMICOLON_SEPARATOR>
+    {
+        return member;
+    }
+    | triggerMember = TriggerStatement()
+    {
+        return triggerMember;
+    }
+}
+
+List<? extends Tree> TriggerStatement():
+{
+     Tree member;
+     List<? extends Tree> members;
+}
+{
+    try {
+        LOOKAHEAD(2)
+        members = TriggerInnerBlock()
+        {
+            return members;
+        }
+        | member = EmptyStatement()
+        {
+            return Collections.singletonList(member);
+        }
+        | member = StatementExpression() <SEMICOLON_SEPARATOR>
+        {
+            return Collections.singletonList(member);
+        }
+        | member = IfStatement()
+        {
+            return Collections.singletonList(member);
+        }
+        | member = WhileStatement()
+        {
+            return Collections.singletonList(member);
+        }
+        | member = DoStatement()
+        {
+            return Collections.singletonList(member);
+        }
+        | member = ForStatement()
+        {
+            return Collections.singletonList(member);
+        }
+        | member = BreakStatement()
+        {
+            return Collections.singletonList(member);
+        }
+        | member = ContinueStatement()
+        {
+            return Collections.singletonList(member);
+        }
+        | member = TriggerReturnStatement()
+        {
+            return Collections.singletonList(member);
+        }
+        | member = ThrowStatement()
+        {
+            return Collections.singletonList(member);
+        }
+        | member = TryStatement()
+        {
+            return Collections.singletonList(member);
+        }
+    } catch (ParseException ex) {
+        contextErrorRecover(new IllegalStatementException(ex));
+        return Collections.singletonList(factory.createErroneousExpression());
+    }
+}
+
+StatementTree TriggerReturnStatement():
+{}
+{
+    <RETURN_KEYWORD><SEMICOLON_SEPARATOR>
+    {
+        return factory.createReturn(null);
+    }
+}
+
+ExpressionTree MethodIdentifier():
+{
+    Token identifierToken = null;
+}
+{
+    try {
+         (   
+            LOOKAHEAD(AllowedKeywordsAsIdentifierForMethods())
+            identifierToken = AllowedKeywordsAsIdentifierForMethods()  
+            | LOOKAHEAD(SpecialKeywordsAsIdentifier())
+              identifierToken = SpecialKeywordsAsIdentifier()
+        )
+        {
+            return factory.createIdentifier(identifierToken);
+        }
+    } catch (ParseException ex) {
+        contextErrorRecoverToNextToken(new ContextParseException(ex));
+        return factory.createErroneousExpression();
+    }
+}
+
+Token AllowedKeywordsAsIdentifier():
+{}
+{
+    (
+        <IDENTIFIER>
+        | <TRANSIENT_KEYWORD>
+        | <RETURNING_KEYWORD>
+        | <SEARCH_KEYWORD>
+        | <STAT_KEYWORD>
+        | <CONVERTCURRENCY_KEYWORD>
+        | <SAVEPOINT_KEYWORD>
+        | <TOLABEL_KEYWORD>
+        | <SHARING_KEYWORD>
+        | <GET_KEYWORD>
+        | <AFTER_KEYWORD>
+        | <BEFORE_KEYWORD>
+        | <FIRST_KEYWORD>
+        | <LAST_KEYWORD>
+        | <CATEGORY_KEYWORD>
+        | <NETWORK_KEYWORD>
+        | <ITERATOR_KEYWORD>
+        | SOQLDateLiteral()
+        | SOQLNDateLiteral()
+    )
+    {
+        return token;
+    }
+}
+
+Token AllowedKeywordsAsIdentifierForMethods():
+{
+}
+{
+    // NOTE: 'SUPER' - 'THIS' - 'THROW' are not supported.
+    // Those keywords have conflicts with the current production rules.
+    (
+        <IDENTIFIER>
+        | <ARRAY_KEYWORD>
+        | <EXCEPTION_KEYWORD>
+        | <INT_KEYWORD>
+        | <PACKAGE_KEYWORD>
+        | <TRANSIENT_KEYWORD>
+        | <ACTIVATE_KEYWORD>
+        | <ANY_KEYWORD>
+        | <AUTONOMOUS_KEYWORD>
+        | <BEGIN_KEYWORD>
+        | <BIGDECIMAL_KEYWORD>
+        | <BYTE_KEYWORD>
+        | <CASE_KEYWORD>
+        | <CAST_KEYWORD>
+        | <CHAR_KEYWORD>
+        | <COLLECT_KEYWORD>
+        | <CONST_KEYWORD>
+        | <_DEFAULT_KEYWORD>
+        | <END_KEYWORD>
+        | <EXIT_KEYWORD>
+        | <EXPORT_KEYWORD>
+        | <FLOAT_KEYWORD>
+        | <GOTO_KEYWORD>
+        | <GROUP_KEYWORD>
+        | <HINT_KEYWORD>
+        | <IMPORT_KEYWORD>
+        | <INNER_KEYWORD>
+        | <INTO_KEYWORD>
+        | <JOIN_KEYWORD>
+        | <LOOP_KEYWORD>
+        | <NUMBER_KEYWORD>
+        | <OF_KEYWORD>
+        | <OUTER_KEYWORD>
+        | <PARALLEL_KEYWORD>
+        | <RETRIEVE_KEYWORD>
+        | <RETURNING_KEYWORD>
+        | <SEARCH_KEYWORD>
+        | <SHORT_KEYWORD>
+        | <STAT_KEYWORD>
+        | <SWITCH_KEYWORD>
+        | <SYNCHRONIZED_KEYWORD>
+        | <THEN_KEYWORD>
+        | <TRANSACTION_KEYWORD>
+        | <WHEN_KEYWORD>
+        | <CONVERTCURRENCY_KEYWORD>
+        | <ROLLBACK_KEYWORD>
+        | <SAVEPOINT_KEYWORD>
+        | <TOLABEL_KEYWORD>
+        | <SHARING_KEYWORD>
+        | <WITHOUT_OTHER>
+        | <WITH_KEYWORD>
+        | <SET_KEYWORD>
+        | <GET_KEYWORD>
+        | <AFTER_KEYWORD>
+        | <TRIGGER_KEYWORD>
+        | <FIRST_KEYWORD>
+        | <LAST_KEYWORD>
+        | <CATEGORY_KEYWORD>
+        | <NETWORK_KEYWORD>
+        | <DELETE_KEYWORD>
+        | <INSERT_KEYWORD>
+        | <MERGE_KEYWORD>
+        | <UNDELETE_KEYWORD>
+        | <UPDATE_KEYWORD>
+        | <UPSERT_KEYWORD>
+        | <ITERATOR_KEYWORD>
+        | SOQLDateLiteral()
+        | SOQLNDateLiteral()
+    )
+    {
+        return token;
+    }
+}
+
+Token SOQLDateLiteral():
+{}
+{
+    (
+        <TODAY_KEYWORD>
+        |<YESTERDAY_KEYWORD>
+        |<TOMORROW_KEYWORD>
+        |<LAST_WEEK_KEYWORD>
+        |<THIS_WEEK_KEYWORD>
+        |<NEXT_WEEK_KEYWORD>
+        |<LAST_MONTH_KEYWORD>
+        |<THIS_MONTH_KEYWORD>
+        |<NEXT_MONTH_KEYWORD>
+        |<LAST_90_DAYS_KEYWORD>
+        |<NEXT_90_DAYS_KEYWORD>
+        |<THIS_QUARTER_KEYWORD>
+        |<LAST_QUARTER_KEYWORD>
+        |<NEXT_QUARTER_KEYWORD>
+        |<THIS_YEAR_KEYWORD>
+        |<LAST_YEAR_KEYWORD>
+        |<NEXT_YEAR_KEYWORD>
+        |<THIS_FISCAL_QUARTER_KEYWORD>
+        |<LAST_FISCAL_QUARTER_KEYWORD>
+        |<NEXT_FISCAL_QUARTER_KEYWORD>
+        |<THIS_FISCAL_YEAR_KEYWORD>
+        |<LAST_FISCAL_YEAR_KEYWORD>
+        |<NEXT_FISCAL_YEAR_KEYWORD>
+    )
+    {
+        return token;
+    }
+}
+
+Token SOQLNDateLiteral():
+{}
+{
+    (
+        <LAST_N_DAYS_KEYWORD>
+        |<NEXT_N_DAYS_KEYWORD>
+        |<NEXT_N_WEEKS_KEYWORD>
+        |<LAST_N_WEEKS_KEYWORD>
+        |<NEXT_N_MONTHS_KEYWORD>
+        |<LAST_N_MONTHS_KEYWORD>
+        |<NEXT_N_QUARTERS_KEYWORD>
+        |<LAST_N_QUARTERS_KEYWORD>
+        |<NEXT_N_YEARS_KEYWORD>
+        |<LAST_N_YEARS_KEYWORD>
+        |<NEXT_N_FISCAL_QUARTERS_KEYWORD>
+        |<LAST_N_FISCAL_QUARTERS_KEYWORD>
+        |<NEXT_N_FISCAL_YEARS_KEYWORD>
+        |<LAST_N_FISCAL_YEARS_KEYWORD>
+    )
+    {
+        return token;
+    }
+}
+
+Token SpecialKeywordsAsIdentifier():
+{}
+{
+    (
+        <WITHOUT_OTHER> 
+        | <OFFSET_KEYWORD> 
+        | <DATA_KEYWORD>
+        | <GROUP_KEYWORD>
+        | <LIMIT_KEYWORD>
+    )
+    {
+        return token;
+    }
+}
+

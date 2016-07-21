@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: org.fundacionjala.oblivion.gradle
+OpenIDE-Module-Localizing-Bundle: org/fundacionjala/oblivion/gradle/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+

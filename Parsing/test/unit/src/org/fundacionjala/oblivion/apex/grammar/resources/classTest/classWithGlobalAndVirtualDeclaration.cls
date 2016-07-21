@@ -1,0 +1,3 @@
+global virtual class GlobalVirtualClass {
+
+}

@@ -1,0 +1,4 @@
+virtual public interface PublicVirtualInterface
+{
+
+}

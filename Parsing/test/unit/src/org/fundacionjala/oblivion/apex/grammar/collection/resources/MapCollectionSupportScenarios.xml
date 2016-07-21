@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tests>
+    <test id="Initialize map instance">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                Map<String, String> colors = new map<string, string>();
+            }
+        }
+    ]]>
+    </test>
+    <test id="Initialize a map instance with empty values">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                Map<String, String> colors = new map<string, string>{};
+            }
+        }
+    ]]>
+    </test>
+    <test id="Initialize a map instance with values">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                Map<String, String> colors = new map<string, string>{a => '2', b => 2};
+            }
+        }
+    ]]>
+    </test>
+    <test id="Initialize a map with nested sets">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                Map<String, map<Boolean, Integer>> colors = new Map<String, map<Boolean, Integer>>();
+            }
+        }
+    ]]>
+    </test>
+    <test id="Declare and initialize a Map with other collections">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                Map<String, List<Set<Boolean>>> colors = new Map<String, List<Set<Boolean>>>();
+            }
+        }
+    ]]>
+    </test>
+        <test id="Casting a Map reference">
+    <![CDATA[
+        public class A {
+            public void test() 
+            {
+                Map<String, String> colors = (map<string, string>) item.getMap();
+            }
+        }
+    ]]>
+    </test>
+    <test id="Map as a function parameter">
+    <![CDATA[
+        public class A {
+            public void test(Map<String, Boolean> mymap) 
+            {
+            }
+        }
+    ]]>
+    </test>
+</tests>
+
