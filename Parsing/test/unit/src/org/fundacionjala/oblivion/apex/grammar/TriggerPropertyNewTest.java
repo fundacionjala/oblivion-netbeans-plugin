@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  *
  * @author Amir Aranibar
  */
-public class TriggerNewInstanceTest extends AbstractTestGrammar {
+public class TriggerPropertyNewTest extends AbstractTestGrammar {
 
     private final static String RESOURCE_FOLDER = "resources/trigger/%s";
 
@@ -37,7 +37,10 @@ public class TriggerNewInstanceTest extends AbstractTestGrammar {
     public void callNewPropertyOfCustomClass() throws FileNotFoundException, ParseException {
         ApexParser parser = getParser("callNewPropertyOfCustomClass.cls");
         parser.CompilationUnit();
+        ParseException firstError = parser.getSyntaxErrors().get(0);
+        String expectedMessage = "line 3, column 34";
         assertEquals(PARSER_ERRORS_ARE_EXPECTED, 1, parser.getSyntaxErrors().size());
+        assert(firstError.getMessage().contains(expectedMessage));
     }
 
     @Override
