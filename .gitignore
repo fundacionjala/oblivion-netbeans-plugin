@@ -36,3 +36,16 @@ Oblivion/nbproject/genfiles.properties
 /Grammar/grammar/apex.jj
 /Grammar/grammar/apexLexer.jj
 /Suite/dist/
+
+# Ignore generated files
+Grammar/src/org/fundacionjala/oblivion/apex/grammar/jcclexer/ApexLexer.java
+Grammar/src/org/fundacionjala/oblivion/apex/grammar/jcclexer/ApexLexerConstants.java
+Grammar/src/org/fundacionjala/oblivion/apex/grammar/jcclexer/ApexLexerTokenManager.java
+Grammar/src/org/fundacionjala/oblivion/apex/grammar/jcclexer/ApexParser.java
+Grammar/src/org/fundacionjala/oblivion/apex/grammar/jcclexer/ApexParserConstants.java
+Grammar/src/org/fundacionjala/oblivion/apex/grammar/jcclexer/ApexParserTokenManager.java
+Grammar/src/org/fundacionjala/oblivion/apex/grammar/jcclexer/CharStream.java
+Grammar/src/org/fundacionjala/oblivion/apex/grammar/jcclexer/ParseException.java
+Grammar/src/org/fundacionjala/oblivion/apex/grammar/jcclexer/Token.java
+Grammar/src/org/fundacionjala/oblivion/apex/grammar/jcclexer/TokenMgrError.java
+Parsing/release/modules/ext/*.jar
