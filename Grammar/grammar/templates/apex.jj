@@ -1563,16 +1563,29 @@ Tree ResultType():
  */
 Name Name():
 {
-    ExpressionTree identifier;
+    ExpressionTree identifier = null;
+    List<ExpressionTree> specialIdentifiers = null;
     List<ExpressionTree> identifiers = new ArrayList<ExpressionTree>();
 }
 {
-    identifier = MethodIdentifier()
-    {
-        identifiers.add(identifier);
-    }
     (
-        LOOKAHEAD(<DOT_SEPARATOR>MethodIdentifier())
+        LOOKAHEAD(TriggerPropertyNewCall())
+        specialIdentifiers = TriggerPropertyNewCall()
+        {
+            identifiers.addAll(specialIdentifiers);
+        }
+        | identifier = MethodIdentifier()
+        {
+            identifiers.add(identifier);
+        }
+    )
+    (
+        LOOKAHEAD(<DOT_SEPARATOR> TriggerPropertyNewCall())
+        <DOT_SEPARATOR> specialIdentifiers = TriggerPropertyNewCall()
+        {
+            identifiers.addAll(specialIdentifiers);
+        }
+        | LOOKAHEAD(<DOT_SEPARATOR>MethodIdentifier())
         <DOT_SEPARATOR> identifier = MethodIdentifier()
         {
             identifiers.add(identifier);
@@ -1580,6 +1593,22 @@ Name Name():
     )*
     {
         return factory.createName(identifiers);
+    }
+}
+
+List<ExpressionTree> TriggerPropertyNewCall():
+{
+    Token triggerToken = null;
+    Token newToken = null;
+    List<ExpressionTree> identifiers = null;
+}
+{
+    (triggerToken = <TRIGGER_KEYWORD>) <DOT_SEPARATOR> (newToken = <NEW_KEYWORD>)
+    {
+        identifiers = new ArrayList<ExpressionTree>();
+        identifiers.add(factory.createIdentifier(triggerToken));
+        identifiers.add(factory.createIdentifier(newToken));
+        return identifiers;
     }
 }
 
