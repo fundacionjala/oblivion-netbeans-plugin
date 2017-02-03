@@ -41,6 +41,7 @@ import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.NewClassTree;
+import com.sun.source.tree.PackageTree;
 import com.sun.source.tree.ParameterizedTypeTree;
 import com.sun.source.tree.ParenthesizedTree;
 import com.sun.source.tree.PrimitiveTypeTree;
@@ -330,5 +331,9 @@ public abstract class ApexTreeVisitorAdapter<R,P> implements TreeVisitor<R, P> {
     public R visitOther(Tree tree, P p) {
         return null;
     }
-    
+
+    @Override
+    public R visitPackage(PackageTree pt, P p) {
+        return null;
+    }
 }

@@ -11,10 +11,14 @@ import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.LineMap;
 import com.sun.source.tree.Tree;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.tools.JavaFileObject;
+
+import com.sun.source.tree.PackageTree;
 
 /**
  * Represents the abstract tree for an Apex compilation unit.
@@ -59,5 +63,10 @@ public class CompilationUnitTreeImpl extends CompoundTree<Tree> implements Compi
     @Override
     public LineMap getLineMap() {
         return null;
+    }
+
+    @Override
+    public PackageTree getPackage() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

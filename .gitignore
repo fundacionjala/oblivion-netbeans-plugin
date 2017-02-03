@@ -49,3 +49,4 @@ Grammar/src/org/fundacionjala/oblivion/apex/grammar/jcclexer/ParseException.java
 Grammar/src/org/fundacionjala/oblivion/apex/grammar/jcclexer/Token.java
 Grammar/src/org/fundacionjala/oblivion/apex/grammar/jcclexer/TokenMgrError.java
 Parsing/release/modules/ext/*.jar
+/ApexDocScanner/dist/

@@ -58,6 +58,8 @@ import com.sun.source.tree.UnionTypeTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.WhileLoopTree;
 import com.sun.source.tree.WildcardTree;
+import com.sun.source.tree.PackageTree;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -352,6 +354,11 @@ public class TreeFinder<T extends Tree> implements TreeVisitor<List<T>, T> {
             result.add((T) node);
         }
         return result;
+    }
+
+    @Override
+    public List<T> visitPackage(PackageTree pt, T p) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

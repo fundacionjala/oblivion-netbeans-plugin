@@ -4,6 +4,7 @@
  */ 
 package org.fundacionjala.oblivion.apex.ast.tree.visitors;
 
+import com.sun.source.tree.PackageTree;
 import com.sun.source.tree.VariableTree;
 
 /**

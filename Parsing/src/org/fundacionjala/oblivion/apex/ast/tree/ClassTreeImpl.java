@@ -41,7 +41,7 @@ public class ClassTreeImpl extends CompoundTree<Tree> implements ClassTree {
     private final Tree extendsClause;
     
     public ClassTreeImpl(ModifiersTree modifiers, List<Token> sharingRules, Tree type, Token nameToken, Token blockStart, Token blockEnd, List<? extends Tree> implementsClause, Tree extendsClause, List<? extends Tree> members) {
-        super(Kind.CLASS, nameToken, new LinkedList<>(members), blockStart, blockEnd);
+        super(Kind.CLASS, nameToken, new LinkedList<Tree>(members), blockStart, blockEnd);
         this.sharingRules = sharingRules;
         this.type = type;
         this.modifiers = modifiers;

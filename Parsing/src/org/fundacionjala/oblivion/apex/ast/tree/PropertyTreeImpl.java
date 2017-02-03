@@ -30,7 +30,7 @@ public class PropertyTreeImpl extends CompoundTree<AccessorTree> implements Prop
     private final Name name;
 
     PropertyTreeImpl(ModifiersTree modifiers, Tree type, Token identifier, List<? extends AccessorTree> accessors, Token blockStart, Token blockEnd) {
-        super(Kind.OTHER, identifier, new ArrayList<>(accessors), blockStart, blockEnd);
+        super(Kind.OTHER, identifier, new ArrayList<AccessorTree>(accessors), blockStart, blockEnd);
         this.accesors = accessors;
         this.modifiers = modifiers;
         this.name = TreeUtils.createNameFromString(identifier.getImage());

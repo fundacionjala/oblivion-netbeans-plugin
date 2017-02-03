@@ -9,11 +9,16 @@ import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.LineMap;
 import com.sun.source.tree.Tree;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.tools.JavaFileObject;
+
 import org.fundacionjala.oblivion.apex.grammar.ast.trigger.TriggerCompilationUnitTree;
+
+import com.sun.source.tree.PackageTree;
 
 /**
  * Represents the abstract syntax tree for the trigger compilation units. 
@@ -64,5 +69,10 @@ public class TriggerCompilationUnitTreeImpl extends CompoundTree<Tree> implement
     @Override
     public List<Tree> getTriggerDeclarations() {
         return this.TriggerTypeDeclarations;
+    }
+
+    @Override
+    public PackageTree getPackage() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
