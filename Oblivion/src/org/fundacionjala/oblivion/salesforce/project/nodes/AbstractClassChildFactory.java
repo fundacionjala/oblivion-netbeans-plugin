@@ -86,7 +86,7 @@ public abstract class AbstractClassChildFactory extends AbstractFolderChildFacto
         addChangeListener();
         this.packagesNames.clear();
         FileObject[] childrenFileObjects = folderFileObject.getChildren();
-        Arrays.sort(childrenFileObjects, new ClassFileComparator(this.packagesNames));
+        Arrays.sort(childrenFileObjects, new ClassFileComparator(this.packagesNames, childrenFileObjects));
         for (FileObject childFileObject : childrenFileObjects) {
             if (validateChild(childFileObject)) {
                 toPopulate.add(childFileObject);
@@ -119,10 +119,15 @@ public abstract class AbstractClassChildFactory extends AbstractFolderChildFacto
 
         private final Map<String, String> packageMap;
         
-        public ClassFileComparator(Map<String, String> packageMap) {
+        public ClassFileComparator(Map<String, String> packageMap, FileObject[] childrenFileObjects) {
             this.packageMap = packageMap;
+            if (childrenFileObjects.length == 1) {
+                FileObject childFile = childrenFileObjects[0];
+                String packageName = getPackageName(childFile);
+                this.packageMap.put(childFile.getPath(), packageName);
+            }
         }
-        
+
         /**
          * Compares to FileObjects. if both FileObjects are folders or files the comparison is done by name, if not the
          * one that is a folder is always greater than the one that is a file.
